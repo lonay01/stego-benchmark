@@ -1,6 +1,6 @@
 # Model catalogue and channel focus
 
-This catalogue covers the 36 method entries retained for the benchmark. It separates **what a method was designed for** from **which channels we test it on**. Inclusion here is not evidence of a completed experiment.
+This catalogue covers 41 method entries selected for evaluation, including five newly added candidates awaiting integration and smoke tests. It separates **what a method was designed for** from **which channels we test it on**. Inclusion here is not evidence of a completed experiment.
 
 ## How to read the channel labels
 
@@ -78,6 +78,22 @@ These entries remain in the catalogue but are not counted among the 22 common-me
 | `fang_screen` | [Fang Screen-Shooting Resilient Watermarking](https://github.com/FangHanNUS/Screen-Shooting-Resilient-Watermarking) | Physical | Requires licensed MATLAB and the relevant toolboxes. Supports 30 useful bits with CRC/BCH; coded and uncoded evaluations must be distinguished. |
 | `camera_shooting_instance` | [Camera-Shooting Resilient Image Instance](https://github.com/gyz-star/Camera-Shooting-Resilient-Watermarking-on-Image-Instance-Level) | Physical | Checkpoint access, instance-level preprocessing, and payload interface still require validation. |
 
+## 4. New additions awaiting integration: 5 entries
+
+These entries are selected for the existing-image, common-message pipeline: an image and message enter the embedder; the resulting image is evaluated in Native or scalar Matched Quality mode before channel attacks and decoding. Source code, published checkpoint references, and message interfaces have been inspected. The selected implementations have not yet passed our five-image smoke test. The IDs below are catalogue identifiers reserved for integration, not evidence that an adapter already exists.
+
+| Catalogue ID | Method / source | Channel focus | Selected configuration and integration checks |
+|---|---|---|---|
+| `trustmark_b` | [TrustMark-B](https://github.com/adobe/trustmark) | Digital | Published B encoder/decoder, 100 raw bits. Use the same common-message mapping and raw/ECC convention as TrustMark-Q. The authors describe B as favouring robustness over quality relative to Q. This is another checkpoint variant of TrustMark, not an independent architecture. |
+| `trustmark_p` | [TrustMark-P](https://github.com/adobe/trustmark) | Digital | Published P encoder/decoder, 100 raw bits. The authors describe P as prioritising visual quality. Preserve and record its native preprocessing and strength settings rather than assuming they equal Q. Use the same common-message mapping as Q; this is a TrustMark variant. |
+| `fin` | [FIN — AAAI 2023](https://github.com/QQiuyp/FIN) | Digital | Flow-based robust watermarking with an invertible noise layer; 64-bit message. [HEAVY checkpoints](https://github.com/QQiuyp/FIN/tree/main/experiments/HEAVY) provide FED and INL. The official demonstration resizes inputs to 128 pixels on the shorter side. Select and pin the checkpoint variant, validate the 512×512 carrier adaptation, and keep any demonstration-time attack outside embedding so that the benchmark alone controls distortions. |
+| `fnns_omniseal` | [FNNS, OmniSealBench implementation](https://github.com/facebookresearch/omnisealbench/blob/main/src/omnisealbench/models/fnns.py) | Digital | Optimises an image perturbation against a fixed decoder. The [model card](https://github.com/facebookresearch/omnisealbench/blob/main/src/omnisealbench/cards/fnns.yaml) specifies 48 bits, 16 leading detection bits, and 10 optimisation steps; the remaining 32 positions accommodate our common 30-bit segment. Pin the detection prefix, two filling bits, optimiser settings, and decoder checkpoint. Report this benchmark implementation explicitly, not as an unchanged reproduction of the original FNNS setup. |
+| `distseal_posthoc_dcae` | [DistSeal, post-hoc DC-AE](https://github.com/facebookresearch/distseal) | Neural — latent-space embedding | Select the existing-image post-hoc mode, not generation-time watermarking. The [published configuration](https://github.com/facebookresearch/distseal/blob/main/configs/training/diffusion/posthoc_latent.yaml) specifies 64 bits and 512×512 images; the [inference notebook](https://github.com/facebookresearch/distseal/blob/main/notebooks/posthoc_dcae.ipynb) embeds a supplied message into autoencoder latents and decodes the marked image. Validate checkpoint dimensions and record the DC-AE and watermarking weights. Latent embedding alone does not establish robustness to neural editing. |
+
+TrustMark's [implementation](https://github.com/adobe/trustmark/blob/main/python/trustmark/trustmark.py) lists the variant-specific checkpoint files and their checksums. OmniSealBench supplies a [checkpoint download script](https://github.com/facebookresearch/omnisealbench/blob/main/scripts/download_image_models.sh) for the FNNS decoder; that repository is archived, so the integration must pin a revision. DistSeal publishes its watermarking checkpoint reference in the [DC-AE model card](https://github.com/facebookresearch/distseal/blob/main/cards/detector_dc-ae.yaml).
+
+For DistSeal, both Native quality and Matched Quality are measured against the original COCO image, not its unmarked autoencoder reconstruction. Reconstruction distortion is part of the total image change. For every addition, message recovery after PNG saving, fixed-resolution handling, and achievable PSNR coverage must be verified before a full run. A compatible interface does not guarantee successful decoding or attainment of all PSNR targets.
+
 ## Catalogue totals and reporting
 
 | Evaluation group | Entries |
@@ -85,8 +101,9 @@ These entries remain in the catalogue but are not counted among the 22 common-me
 | Common 30-bit image-message track | 22 |
 | Generation-time track | 9 |
 | Additional requirements | 5 |
-| **Total** | **36** |
+| New additions awaiting integration | 5 |
+| **Total** | **41** |
 
-These counts describe benchmark entries, not 36 independent architectures or 36 completed runs. VINE-B/VINE-R and other named variants are intentionally separate entries. Channel tags overlap, so they should not be turned into exclusive group counts without an explicit rule.
+These counts describe benchmark entries, not 41 independent architectures or 41 completed runs. VINE-B/VINE-R and TrustMark-Q/B/P are intentionally separate entries within their respective families. Channel tags overlap, so they should not be turned into exclusive group counts without an explicit rule.
 
 Source links support the stated research scope. Payload and integration notes describe the selected benchmark configurations, based on the implementation inventory reviewed on 13 September 2026. Execution status and missing-checkpoint gates must be checked against the actual run records before claiming that a method was evaluated. This catalogue does not replace those records or a checkpoint manifest.

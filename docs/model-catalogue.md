@@ -1,6 +1,6 @@
 # Model catalogue and channel focus
 
-This catalogue covers the 41 method entries considered for the benchmark. It separates **what a method was designed for** from **which channels we test it on**. Inclusion here is not evidence of a completed experiment.
+This catalogue covers the 36 method entries retained for the benchmark. It separates **what a method was designed for** from **which channels we test it on**. Inclusion here is not evidence of a completed experiment.
 
 ## How to read the channel labels
 
@@ -46,15 +46,7 @@ This is protocol eligibility, not a claim that all environments have passed the 
 
 The legacy adapters and StegaStamp ONNX use the pinned [WIBE implementation](https://github.com/ispras/wibe/tree/acf94ed81db4243d22fb7a7e075aff1671bc58e0). A link to an author's repository does not establish checkpoint equivalence. Fixed-resolution adapters, raw/ECC choices, and precision changes must be disclosed in each run.
 
-## 2. Existing-image detection track: 1 method
-
-| Registry ID | Method / source | Channel focus | Why it is separate |
-|---|---|---|---|
-| `zodiac` | [ZoDiac](https://github.com/zhanglijun95/ZoDiac) | Neural — regeneration attacks | Marks an existing image using diffusion-based optimization. Our selected implementation detects a keyed watermark; it does not encode arbitrary 30-bit messages. |
-
-ZoDiac can use the same COCO images, attacks, Native mode, and external scalar quality matching. It requires detection metrics and unmarked controls rather than invented BER values. The five-message rule is not applicable; a key-repeat policy must be specified separately if multiple embeddings are required.
-
-## 3. Generation-time track: 9 methods
+## 2. Generation-time track: 9 methods
 
 All nine have a **Neural — generation** focus. They create marked images through a generator rather than accepting the same COCO carrier used in the common-message track. Their generated outputs can still undergo the digital, neural, and physical channels.
 
@@ -74,7 +66,7 @@ In this benchmark they use Native mode and a separate generation/control protoco
 
 Generation-time embedding and resilience to neural editing are separate classification axes. For example, VINE and Robust-Wide belong to the common-image track even though their focus is neural editing.
 
-## 4. Candidates with additional requirements: 9 methods
+## 3. Candidates with additional requirements: 5 methods
 
 These entries remain in the catalogue but are not counted among the 22 common-message methods above. Restrictions describe the current integration record; they are not claims that the methods are impossible to run or that no weights exist publicly.
 
@@ -84,22 +76,17 @@ These entries remain in the catalogue but are not counted among the 22 common-me
 | `omniguard` | [OmniGuard copyright component](https://github.com/xuanyuzhang21/OmniGuard) | Digital / Neural | Hybrid manipulation localization and copyright protection. A matching trained 100-bit copyright checkpoint must be verified; localization weights are not interchangeable. |
 | `sepwater` | [SepWater](https://github.com/CVhnu/sepwater) | Physical | Anti-screen-shooting latent-space watermarking. Requires the complete author checkpoint; selected interface uses 100 raw bits. |
 | `fang_screen` | [Fang Screen-Shooting Resilient Watermarking](https://github.com/FangHanNUS/Screen-Shooting-Resilient-Watermarking) | Physical | Requires licensed MATLAB and the relevant toolboxes. Supports 30 useful bits with CRC/BCH; coded and uncoded evaluations must be distinguished. |
-| `xiao_sw` | [Xiao Client-Side Embedding SW](https://github.com/XIAO-Xiangli/SW) | Physical | MATLAB-dependent; selected implementation has 24 useful bits with BCH. Needs a separate payload group. |
 | `camera_shooting_instance` | [Camera-Shooting Resilient Image Instance](https://github.com/gyz-star/Camera-Shooting-Resilient-Watermarking-on-Image-Instance-Level) | Physical | Checkpoint access, instance-level preprocessing, and payload interface still require validation. |
-| `udh_lfm` | [Universal Deep Hiding — LFM](https://github.com/ChaoningZhang/Universal-Deep-Hiding) | Physical — LFM variant | Light-field messaging variant of a broader image-hiding method. The secret is an image, not a 30-bit message; requires a separate payload protocol and verified weights. |
-| `fontguard` | [FontGuard](https://github.com/KAHIMWONG/FontGuard) | Physical / Digital | Font watermarking evaluated across optical capture and online transmission. Its font/text carrier is not a natural COCO photograph. |
-| `document_screen` | [Screen-Shooting Resilient Document Watermarking](https://github.com/gslxr/Screen-Shooting-Resilient-Document-Image-Watermarking) | Physical | Screen-camera transmission of document images; separate document corpus, weights, and protocol required. |
 
 ## Catalogue totals and reporting
 
 | Evaluation group | Entries |
 |---|---:|
 | Common 30-bit image-message track | 22 |
-| Existing-image detection track: ZoDiac | 1 |
 | Generation-time track | 9 |
-| Additional requirements or different carriers | 9 |
-| **Total** | **41** |
+| Additional requirements | 5 |
+| **Total** | **36** |
 
-These counts describe benchmark entries, not 41 independent architectures or 41 completed runs. VINE-B/VINE-R and other named variants are intentionally separate entries. Channel tags overlap, so they should not be turned into exclusive group counts without an explicit rule.
+These counts describe benchmark entries, not 36 independent architectures or 36 completed runs. VINE-B/VINE-R and other named variants are intentionally separate entries. Channel tags overlap, so they should not be turned into exclusive group counts without an explicit rule.
 
 Source links support the stated research scope. Payload and integration notes describe the selected benchmark configurations, based on the implementation inventory reviewed on 13 September 2026. Execution status and missing-checkpoint gates must be checked against the actual run records before claiming that a method was evaluated. This catalogue does not replace those records or a checkpoint manifest.

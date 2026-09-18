@@ -3,6 +3,7 @@
 ## Protocols
 
 - [Digital channel: Native and Matched Quality](docs/digital-channel-protocol.md)
+- [Neural channel: Native and Matched Quality](docs/neural-channel-protocol.md)
 
 ## Methods
 

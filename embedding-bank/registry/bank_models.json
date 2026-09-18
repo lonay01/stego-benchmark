@@ -1,0 +1,1346 @@
+[
+  {
+    "id": "trustmark_q",
+    "family": "TrustMark",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 100,
+    "adapter": "wmbench.adapters.legacy:WibeAdapter",
+    "python": "3.10",
+    "environment": "legacy_trustmark_q",
+    "payload_namespace": "trustmark",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": []
+    },
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "trustmark==0.9.1",
+      "lightning==2.4.0"
+    ],
+    "assets": [],
+    "options": {
+      "wrapper": "wibench.algorithms.trustmark.wrapper:TrustMarkWrapper",
+      "kwargs": {
+        "params": {
+          "model_type": "Q",
+          "wm_length": 100,
+          "wm_strength": 0.75
+        }
+      }
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization.",
+    "validated_lock": "locks/legacy_trustmark_q.lock"
+  },
+  {
+    "id": "wam",
+    "family": "WAM",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 32,
+    "adapter": "wmbench.adapters.legacy:WibeAdapter",
+    "python": "3.10",
+    "environment": "legacy_wam",
+    "payload_namespace": "watermark_anything",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": [
+        "submodules/watermark_anything"
+      ]
+    },
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "pycocotools==2.0.8",
+      "matplotlib==3.9.2",
+      "scikit-learn==1.5.2"
+    ],
+    "assets": [],
+    "options": {
+      "wrapper": "wibench.algorithms.watermark_anything.wrapper:WatermarkAnythingWrapper",
+      "kwargs": {
+        "wm_length": 32,
+        "scaling_w": 1.5
+      }
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization.",
+    "validated_lock": "locks/legacy_wam.lock"
+  },
+  {
+    "id": "videoseal",
+    "family": "Videoseal",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 256,
+    "adapter": "wmbench.adapters.legacy:WibeAdapter",
+    "python": "3.10",
+    "environment": "legacy_videoseal",
+    "payload_namespace": "videoseal",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": []
+    },
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "videoseal @ git+https://github.com/facebookresearch/videoseal@870ca7fb33578b90f14c602016b6c2788096226e",
+      "av==13.1.0"
+    ],
+    "assets": [],
+    "options": {
+      "wrapper": "wibench.algorithms.videoseal.wrapper:VideosealWrapper",
+      "kwargs": {},
+      "model_card": "resources/videoseal/videoseal_1.0.yaml"
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization.",
+    "validated_lock": "locks/legacy_videoseal.lock"
+  },
+  {
+    "id": "pixelseal",
+    "family": "Pixelseal",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 256,
+    "adapter": "wmbench.adapters.legacy:WibeAdapter",
+    "python": "3.10",
+    "environment": "legacy_pixelseal",
+    "payload_namespace": "pixelseal",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": []
+    },
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "videoseal @ git+https://github.com/facebookresearch/videoseal@870ca7fb33578b90f14c602016b6c2788096226e",
+      "av==13.1.0"
+    ],
+    "assets": [],
+    "options": {
+      "wrapper": "wibench.algorithms.videoseal.wrapper:PixelSeal",
+      "kwargs": {},
+      "model_card": "resources/videoseal/pixelseal.yaml"
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization.",
+    "validated_lock": "locks/legacy_pixelseal.lock"
+  },
+  {
+    "id": "chunkyseal",
+    "family": "Chunkyseal",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 1024,
+    "adapter": "wmbench.adapters.legacy:WibeAdapter",
+    "python": "3.10",
+    "environment": "legacy_chunkyseal",
+    "payload_namespace": "chunkyseal",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": []
+    },
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "videoseal @ git+https://github.com/facebookresearch/videoseal@870ca7fb33578b90f14c602016b6c2788096226e",
+      "av==13.1.0"
+    ],
+    "assets": [],
+    "options": {
+      "wrapper": "wibench.algorithms.videoseal.wrapper:ChunkySeal",
+      "kwargs": {},
+      "model_card": "resources/videoseal/chunkyseal.yaml"
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization. New FP32 configuration differs from prior T4 FP16-networks/FP32-JND; numerical equivalence is NOT assumed. Checkpoint ~12.46GiB plus initialization RAM.",
+    "validated_lock": "locks/legacy_chunkyseal.lock"
+  },
+  {
+    "id": "vine_b",
+    "family": "VINE",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 100,
+    "adapter": "wmbench.adapters.legacy:WibeAdapter",
+    "python": "3.10",
+    "environment": "legacy_vine_b",
+    "payload_namespace": "vine",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": []
+    },
+    "requirements": [
+      "torch==2.0.1",
+      "torchvision==0.15.2",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.11.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.6.0.66",
+      "setuptools==80.9.0",
+      "vine @ git+https://github.com/Shilin-LU/VINE@d72f11a93f8de9bc45ef61202b9c8dda2a70cc77",
+      "peft==0.11.1",
+      "transformers==4.43.3",
+      "accelerate==0.30.0",
+      "diffusers @ git+https://github.com/Shilin-LU/VINE.git@d72f11a93f8de9bc45ef61202b9c8dda2a70cc77#subdirectory=diffusers",
+      "clip @ git+https://github.com/openai/CLIP.git@d05afc436d78f1c48dc0dbf8e5980a9d471f35f6",
+      "huggingface-hub==0.34.4"
+    ],
+    "assets": [],
+    "options": {
+      "wrapper": "wibench.algorithms.vine.wrapper:VINEWrapper",
+      "kwargs": {
+        "params": {
+          "encoder_weights_path": "./model_files/vine/VINE-B-Enc",
+          "decoder_weights_path": "./model_files/vine/VINE-B-Dec"
+        }
+      }
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization. Isolated author-pinned torch2.0.1/CUDA11 stack with VINE's modified diffusers; do not substitute the standard diffusers package.",
+    "validated_lock": "locks/legacy_vine_b.lock"
+  },
+  {
+    "id": "vine_r",
+    "family": "VINE",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 100,
+    "adapter": "wmbench.adapters.legacy:WibeAdapter",
+    "python": "3.10",
+    "environment": "legacy_vine_r",
+    "payload_namespace": "vine_r",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": []
+    },
+    "requirements": [
+      "torch==2.0.1",
+      "torchvision==0.15.2",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.11.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.6.0.66",
+      "setuptools==80.9.0",
+      "vine @ git+https://github.com/Shilin-LU/VINE@d72f11a93f8de9bc45ef61202b9c8dda2a70cc77",
+      "peft==0.11.1",
+      "transformers==4.43.3",
+      "accelerate==0.30.0",
+      "diffusers @ git+https://github.com/Shilin-LU/VINE.git@d72f11a93f8de9bc45ef61202b9c8dda2a70cc77#subdirectory=diffusers",
+      "clip @ git+https://github.com/openai/CLIP.git@d05afc436d78f1c48dc0dbf8e5980a9d471f35f6",
+      "huggingface-hub==0.34.4"
+    ],
+    "assets": [
+      {
+        "kind": "hf_snapshot",
+        "repo_id": "Shilin-LU/VINE-R-Enc",
+        "revision": "0c255688e032e4318c700c485c0625367b70908c",
+        "path": "model_files/vine/VINE-R-Enc"
+      },
+      {
+        "kind": "hf_snapshot",
+        "repo_id": "Shilin-LU/VINE-R-Dec",
+        "revision": "0f094b300be71a358f7c1769221f50318f1b4d74",
+        "path": "model_files/vine/VINE-R-Dec"
+      }
+    ],
+    "options": {
+      "wrapper": "wibench.algorithms.vine.wrapper:VINEWrapper",
+      "kwargs": {
+        "params": {
+          "encoder_weights_path": "./model_files/vine/VINE-R-Enc",
+          "decoder_weights_path": "./model_files/vine/VINE-R-Dec"
+        }
+      }
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization. Isolated author-pinned torch2.0.1/CUDA11 stack with VINE's modified diffusers; do not substitute the standard diffusers package.",
+    "validated_lock": "locks/legacy_vine_r.lock"
+  },
+  {
+    "id": "rosteals",
+    "family": "RoSteALS",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 100,
+    "adapter": "wmbench.adapters.legacy:WibeAdapter",
+    "python": "3.10",
+    "environment": "legacy_rosteals",
+    "payload_namespace": "rosteals",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": [
+        "submodules/RoSteALS",
+        "submodules/taming-transformers"
+      ]
+    },
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "pytorch-lightning==2.4.0",
+      "lpips==0.1.4",
+      "matplotlib==3.9.2",
+      "kornia==0.7.3"
+    ],
+    "assets": [],
+    "options": {
+      "wrapper": "wibench.algorithms.rosteals.wrapper:RoSteALSWrapper",
+      "kwargs": {
+        "params": {}
+      }
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization.",
+    "validated_lock": "locks/legacy_rosteals.lock"
+  },
+  {
+    "id": "invismark",
+    "family": "InvisMark",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 100,
+    "adapter": "wmbench.adapters.legacy:WibeAdapter",
+    "python": "3.10",
+    "environment": "legacy_invismark",
+    "payload_namespace": "invismark",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": [
+        "submodules/invismark"
+      ]
+    },
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "bchlib==2.1.3",
+      "focal-frequency-loss==0.3.0",
+      "tensorboard==2.18.0",
+      "lpips==0.1.4",
+      "kornia==0.7.3"
+    ],
+    "assets": [],
+    "options": {
+      "wrapper": "wibench.algorithms.invismark.wrapper:InvisMarkWrapper",
+      "kwargs": {
+        "wm_length": 100
+      }
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization.",
+    "reserved_bits": {
+      "48": 0,
+      "49": 1,
+      "50": 0,
+      "51": 0,
+      "64": 1,
+      "65": 0
+    },
+    "validated_lock": "locks/legacy_invismark.lock"
+  },
+  {
+    "id": "rivagan_benchmark",
+    "family": "RivaGAN benchmark",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 32,
+    "adapter": "wmbench.adapters.legacy:InvisibleWatermarkAdapter",
+    "python": "3.10",
+    "environment": "legacy_rivagan_benchmark",
+    "payload_namespace": "riva_gan",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": []
+    },
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "invisible-watermark==0.2.0",
+      "onnxruntime==1.20.1",
+      "PyWavelets==1.8.0"
+    ],
+    "assets": [],
+    "options": {
+      "method": "rivaGan"
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization.",
+    "provenance": "benchmark_substitute_ONNX",
+    "validated_lock": "locks/legacy_rivagan_benchmark.lock"
+  },
+  {
+    "id": "dwt_dct_svd",
+    "family": "DWT-DCT-SVD",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 32,
+    "adapter": "wmbench.adapters.legacy:InvisibleWatermarkAdapter",
+    "python": "3.10",
+    "environment": "legacy_dwt_dct_svd",
+    "payload_namespace": "dwt_dct_svd",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": []
+    },
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "invisible-watermark==0.2.0",
+      "onnxruntime==1.20.1",
+      "PyWavelets==1.8.0"
+    ],
+    "assets": [],
+    "options": {
+      "method": "dwtDctSvd"
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization.",
+    "provenance": "algorithm_no_weights",
+    "validated_lock": "locks/legacy_dwt_dct_svd.lock"
+  },
+  {
+    "id": "mbrs",
+    "family": "MBRS",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 30,
+    "adapter": "wmbench.adapters.legacy:WibeAdapter",
+    "python": "3.10",
+    "environment": "legacy_mbrs",
+    "payload_namespace": "mbrs",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": [
+        "submodules/mbrs"
+      ]
+    },
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "kornia==0.7.3"
+    ],
+    "assets": [],
+    "options": {
+      "wrapper": "wibench.algorithms.mbrs.wrapper:MBRSWrapper",
+      "kwargs": {
+        "wm_length": 30
+      }
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization.",
+    "validated_lock": "locks/legacy_mbrs.lock"
+  },
+  {
+    "id": "cin",
+    "family": "CIN",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 30,
+    "adapter": "wmbench.adapters.legacy:WibeAdapter",
+    "python": "3.10",
+    "environment": "legacy_cin",
+    "payload_namespace": "cin",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": [
+        "submodules/CIN"
+      ]
+    },
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "kornia==0.7.3",
+      "colormath==3.0.0",
+      "importlib-metadata==8.5.0"
+    ],
+    "assets": [],
+    "options": {
+      "wrapper": "wibench.algorithms.cin.wrapper:CINWrapper",
+      "kwargs": {
+        "params": {}
+      }
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization.",
+    "validated_lock": "locks/legacy_cin.lock"
+  },
+  {
+    "id": "hidden_benchmark",
+    "family": "HiDDeN benchmark",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 30,
+    "adapter": "wmbench.adapters.legacy:WibeAdapter",
+    "python": "3.10",
+    "environment": "legacy_hidden_benchmark",
+    "payload_namespace": "hidden",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": [
+        "submodules/HiDDeN"
+      ]
+    },
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "onnxruntime==1.20.1"
+    ],
+    "assets": [],
+    "options": {
+      "wrapper": "wibench.algorithms.hidden.wrapper:HiddenWrapper",
+      "kwargs": {
+        "params": {
+          "run_name": "combined-noise"
+        }
+      }
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization.",
+    "provenance": "third_party_PyTorch_benchmark_checkpoint_not_original_Torch7",
+    "validated_lock": "locks/legacy_hidden_benchmark.lock"
+  },
+  {
+    "id": "arwgan",
+    "family": "ARWGAN",
+    "origin_group": "digital",
+    "track": "posthoc",
+    "backend": "python",
+    "adapter": "wmbench.adapters.extended:ARWGANAdapter",
+    "native_bits": 30,
+    "python": "3.10",
+    "environment": "ext_arwgan",
+    "validated_lock": "locks/extended_arwgan.lock",
+    "requirements": [
+      "torch==2.2.2",
+      "torchvision==0.17.2",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "huggingface-hub==0.34.4"
+    ],
+    "source": {
+      "url": "https://github.com/river-huang/ARWGAN.git",
+      "revision": "937a224f49bc98c65138ae9807c7ce28ad387c13"
+    },
+    "assets": [
+      {
+        "url": "https://nextcloud.ispras.ru/index.php/s/4THrnJDdjF6xGMc/download?path=%2Fcheckpoints&files=ARWGAN.pyt",
+        "path": "ARWGAN.pyt",
+        "sha256": "bde8ab95c1cfdf8a6af7c4bd94385bb307e8dcad6dad2549b119a65539ce1a3a",
+        "size_bytes": 26238880,
+        "provenance": "WIBE-distributed mirror of author pretrained archive; downloaded and SHA256 verified in local smoke test; equality with original archive not independently verified"
+      },
+      {
+        "url": "https://nextcloud.ispras.ru/index.php/s/4THrnJDdjF6xGMc/download?path=%2F&files=options-and-config.pickle",
+        "path": "options-and-config.pickle",
+        "size_bytes": 1698,
+        "provenance": "Archived as provenance only; adapter does not execute training pickle"
+      }
+    ],
+    "options": {
+      "weights": "ARWGAN.pyt"
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "explanation": "Concrete author encoder/decoder. Actual pretrained CPU smoke on COCO139: 0/30 errors at 128px and 512px. Smooth synthetic canaries have 6/30 and 11/30 errors, recorded in report. Production Python3.10/Torch2.2.2/CUDA environment remains untested."
+    },
+    "validation": {
+      "report": "validation/arwgan_cpu/report.json",
+      "python": "3.12.14",
+      "torch": "2.5.1+cpu",
+      "scope": "CPU tensor/PNG interface and one natural-image clean canary; not benchmark results"
+    },
+    "notes": [
+      "Native network uses 128px input; benchmark bilinear antialiased residual transfer to the common carrier must be reported.",
+      "Only encoder/decoder state is used; discriminator/optimizer and noiser are unnecessary for inference."
+    ]
+  },
+  {
+    "id": "ssl_watermarking",
+    "family": "SSL Watermarking",
+    "origin_group": "digital",
+    "track": "posthoc",
+    "backend": "python",
+    "adapter": "wmbench.adapters.extended:SSLWatermarkingAdapter",
+    "native_bits": 30,
+    "python": "3.10",
+    "environment": "ext_ssl",
+    "validated_lock": "locks/extended_ssl_watermarking.lock",
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.11.4",
+      "tqdm==4.66.5",
+      "huggingface-hub==0.34.4"
+    ],
+    "source": {
+      "url": "https://github.com/facebookresearch/ssl_watermarking.git",
+      "revision": "3e65334bd28ecbc66756f0179def9dc4c88a6acc"
+    },
+    "assets": [
+      {
+        "url": "https://dl.fbaipublicfiles.com/ssl_watermarking/dino_r50_plus.pth",
+        "path": "dino_r50_plus.pth",
+        "sha256": "ab26d85d00cb1be8e757cf8820cf0fd8aa729ea7e21b1cf6c44875952ba8eb0f",
+        "size_bytes": 788803344,
+        "provenance": "Author DINO ResNet-50 weights; restricted loader verified on CPU 2026-09-07"
+      },
+      {
+        "url": "https://dl.fbaipublicfiles.com/ssl_watermarking/out2048_yfcc_orig.pth",
+        "path": "out2048_yfcc_orig.pth",
+        "provenance": "Author whitening normalization trained on original-resolution YFCC images"
+      }
+    ],
+    "options": {
+      "weights": "dino_r50_plus.pth",
+      "normalization": "out2048_yfcc_orig.pth",
+      "native_bits": 30,
+      "key_seed": 0,
+      "epochs": 100,
+      "native_psnr": 42.0,
+      "lambda_w": 50000.0
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "explanation": "Concrete author watermark_multibit and decode_multibit functions; optimize image for 100 steps. Carrier key is saved beside embedding metadata. GPU inference not run on this host."
+    },
+    "notes": [
+      "Native defaults follow author's main_multibit.py, including PSNR 42 and lambda_w 5e4; WIBE defaults differ and are not silently substituted.",
+      "The .carrier.npy sidecar must be kept with the metadata through resume/export.",
+      "This adapter uses image gradients and cannot be wrapped in global inference_mode."
+    ]
+  },
+  {
+    "id": "maskwm",
+    "family": "MaskWM",
+    "origin_group": "digital",
+    "track": "posthoc",
+    "backend": "python",
+    "adapter": "wmbench.adapters.extended:MaskWMAdapter",
+    "native_bits": 32,
+    "python": "3.10",
+    "environment": "ext_maskwm",
+    "validated_lock": "locks/extended_maskwm.lock",
+    "requirements": [
+      "torch==2.2.2",
+      "torchvision==0.17.2",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "PyYAML==6.0.2",
+      "kornia==0.7.3",
+      "compressai==1.2.8",
+      "diffusers==0.27.2",
+      "huggingface-hub==0.25.2",
+      "accelerate==0.30.1"
+    ],
+    "source": {
+      "url": "https://github.com/hurunyi/MaskWM.git",
+      "revision": "00864624446a57d2cf5d56dab73095ef64c6ade6"
+    },
+    "assets": [
+      {
+        "url": "https://huggingface.co/Runyi-Hu/MaskWM/resolve/a4aacf5c9769a25482dc087b39ccd57354c3f030/D_32bits.pth",
+        "path": "D_32bits.pth",
+        "sha256": "8cd30d6f5f8b40506e2b778b214cb74b9ca7172e0ad7fef6f0fee5605fa07079",
+        "size_bytes": 253735941,
+        "provenance": "Author Hugging Face global D_32bits checkpoint; SHA256 from Hub LFS metadata"
+      }
+    ],
+    "options": {
+      "weights": "D_32bits.pth"
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "explanation": "Source-backed global D_32bits encoder/decoder with author JND factor 1.3 and blue=True; full-image embedding, not local-mask IoU testing. Real-weight inference still required."
+    },
+    "notes": [
+      "VAE-finetuned checkpoints are separate variants and are not used.",
+      "Native encoder processes 256px internally, residual is resized back to common carrier resolution."
+    ]
+  },
+  {
+    "id": "robust_wide",
+    "family": "Robust-Wide",
+    "origin_group": "generative_editing",
+    "track": "posthoc",
+    "backend": "python",
+    "adapter": "wmbench.adapters.extended:RobustWideAdapter",
+    "native_bits": 64,
+    "python": "3.10",
+    "environment": "ext_robustwide",
+    "validated_lock": "locks/extended_robust_wide.lock",
+    "requirements": [
+      "torch==2.2.2",
+      "torchvision==0.17.2",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "PyYAML==6.0.2",
+      "huggingface-hub==0.34.4"
+    ],
+    "source": {
+      "url": "https://github.com/hurunyi/Robust-Wide.git",
+      "revision": "6a2ee6c991b27f36f2980a7de5c6d7b064c9fa11"
+    },
+    "assets": [
+      {
+        "url": "https://nextcloud.ispras.ru/index.php/s/6PWaxBTBJTA688x/download?path=%2F&files=wm_model.ckpt",
+        "path": "wm_model.ckpt",
+        "size_bytes": 1783790456,
+        "provenance": "WIBE-distributed copy of author Robust-Wide checkpoint; equality to original Drive folder not independently verified"
+      }
+    ],
+    "options": {
+      "weights": "wm_model.ckpt"
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "explanation": "Author WatermarkModel/config.yaml, strict state loading and 64-bit decoder are implemented. Download endpoint checked (1.78 GB); real-weight inference still required."
+    },
+    "notes": [
+      "This is a relatively large watermark network; do not infer VRAM needs from checkpoint bytes alone."
+    ]
+  },
+  {
+    "id": "sepmark",
+    "family": "SepMark",
+    "origin_group": "forensic_hybrid",
+    "track": "posthoc",
+    "backend": "python",
+    "adapter": "wmbench.adapters.extended:SepMarkAdapter",
+    "native_bits": 128,
+    "python": "3.10",
+    "environment": "ext_sepmark",
+    "validated_lock": "locks/extended_sepmark.lock",
+    "requirements": [
+      "torch==2.2.2",
+      "torchvision==0.17.2",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "kornia==0.7.3",
+      "huggingface-hub==0.34.4"
+    ],
+    "source": {
+      "url": "https://github.com/sh1newu/SepMark.git",
+      "revision": "4bf060da5b31abc2d623b6edf8aafcdd2d2f8db1"
+    },
+    "assets": [
+      {
+        "url": "https://nextcloud.ispras.ru/index.php/s/KGwxqaX97QtKP2c/download?path=%2F&files=EC_90.pth",
+        "path": "EC_90.pth",
+        "size_bytes": 576648099,
+        "provenance": "WIBE-distributed author EC_90 256px/128-bit release; original Drive archive equality not independently verified"
+      }
+    ],
+    "options": {
+      "weights": "EC_90.pth"
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "explanation": "Author encoder and both decoders instantiated without face-editing training dependencies. Primary tracing decoder_C; decoder_RF output retained separately. Real-weight inference still required."
+    },
+    "notes": [
+      "Messages are mapped from binary to {-0.1,+0.1}; decode threshold is zero.",
+      "COCO evaluates transfer, not the full face/deepfake-specialized task."
+    ]
+  },
+  {
+    "id": "stegastamp",
+    "family": "StegaStamp",
+    "origin_group": "physical",
+    "track": "posthoc",
+    "backend": "python",
+    "adapter": "wmbench.adapters.physical:StegaStampONNX",
+    "native_bits": 100,
+    "python": "3.10",
+    "environment": "phys_stegastamp_onnx",
+    "validated_lock": "locks/physical_stegastamp.lock",
+    "requirements": [
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "opencv-python-headless==4.9.0.80",
+      "onnxruntime-gpu==1.20.2",
+      "huggingface-hub==0.34.4"
+    ],
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0"
+    },
+    "assets": [
+      {
+        "url": "https://nextcloud.ispras.ru/index.php/s/K6wrA6KweXZ2DGL/download?path=%2F&files=stega_stamp.onnx",
+        "path": "stega_stamp.onnx",
+        "kind": "file",
+        "expected_bytes": 218974214,
+        "sha256": "369f8134f4e35da9659777f02468f4200c256d14742b9702f2ac28808da675e2"
+      }
+    ],
+    "options": {
+      "weights": "stega_stamp.onnx"
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "raw_bits": 100,
+      "ecc": "none",
+      "implementation": "WIBE ONNX benchmark checkpoint, original TensorFlow equivalence not tested"
+    },
+    "notes": "Raw100 ONNX inference. The explicit file download is required; the share /download endpoint can return HTML. CUDA12 and cuDNN9 are required by the pinned GPU runtime."
+  },
+  {
+    "id": "pimog",
+    "family": "PIMoG",
+    "origin_group": "physical",
+    "track": "posthoc",
+    "backend": "python",
+    "adapter": "wmbench.adapters.physical:PIMoG",
+    "native_bits": 30,
+    "python": "3.10",
+    "environment": "phys_pimog",
+    "validated_lock": "locks/physical_pimog.lock",
+    "requirements": [
+      "torch==2.0.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "opencv-python-headless==4.9.0.80",
+      "kornia==0.6.12",
+      "huggingface-hub==0.34.4"
+    ],
+    "source": {
+      "url": "https://github.com/FangHanNUS/PIMoG-An-Effective-Screen-shooting-Noise-Layer-Simulation-for-Deep-Learning-Based-Watermarking-Netw.git",
+      "revision": "848864322b364b4becb6f07215a951465f7469d4"
+    },
+    "assets": [
+      {
+        "url": "https://raw.githubusercontent.com/FangHanNUS/PIMoG-An-Effective-Screen-shooting-Noise-Layer-Simulation-for-Deep-Learning-Based-Watermarking-Netw/848864322b364b4becb6f07215a951465f7469d4/models/ScreenShooting/Encoder_Decoder_Model_mask_99.pth",
+        "path": "Encoder_Decoder_Model_mask_99.pth",
+        "kind": "file",
+        "sha256": "51ea24312d9c8d0e16879ac073e241071216c723576d0143e55a116dcd0120f8"
+      }
+    ],
+    "options": {
+      "weights": "Encoder_Decoder_Model_mask_99.pth"
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "raw_bits": 30,
+      "ecc": "none",
+      "model_resolution": 128
+    },
+    "notes": "Uses original BGR preprocessing and direct Encoder/Decoder. Fixed128 output residual is lifted to the protocol carrier resolution, a documented benchmark adaptation."
+  },
+  {
+    "id": "ssrh",
+    "family": "SSRH",
+    "origin_group": "physical",
+    "track": "posthoc",
+    "backend": "python",
+    "adapter": "wmbench.adapters.physical:SSRH",
+    "native_bits": 30,
+    "python": "3.10",
+    "environment": "phys_ssrh",
+    "validated_lock": "locks/physical_ssrh.lock",
+    "requirements": [
+      "torch==2.0.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "opencv-python-headless==4.9.0.80",
+      "huggingface-hub==0.34.4"
+    ],
+    "source": {
+      "url": "https://github.com/Dawn-Hsiao/SSRH.git",
+      "revision": "12ea39b5894eb91e7173d8f157e93e641d924454"
+    },
+    "assets": [
+      {
+        "url": "https://raw.githubusercontent.com/Dawn-Hsiao/SSRH/12ea39b5894eb91e7173d8f157e93e641d924454/models/SSRH.pth",
+        "path": "SSRH.pth",
+        "kind": "file",
+        "sha256": "ea26af97be469a082524918b2d79c7474197dcb144ca651aa4df8f223e040665"
+      }
+    ],
+    "options": {
+      "weights": "SSRH.pth"
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "raw_bits": 30,
+      "ecc": "none",
+      "model_resolution": 128
+    },
+    "notes": "Original BGR data-loader convention. Encoder128 residual resize is explicitly recorded. No training noise layer runs during inference."
+  },
+  {
+    "id": "editguard",
+    "family": "EditGuard",
+    "origin_group": "forensic_hybrid",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 64,
+    "adapter": "wmbench.adapters.legacy:EditGuardAdapter",
+    "python": "3.10",
+    "environment": "legacy_editguard",
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "lpips==0.1.4",
+      "kornia==0.7.3",
+      "tensorboard==2.18.0",
+      "diffusers==0.32.2",
+      "transformers==4.46.3",
+      "accelerate==1.2.1"
+    ],
+    "source": {
+      "url": "https://github.com/xuanyuzhang21/EditGuard.git",
+      "revision": "174778fb371640bb31b32fcb9f7bfd440c88766b"
+    },
+    "assets": [],
+    "manual_assets": [
+      {
+        "path": "degrade.pth",
+        "url": "https://github.com/xuanyuzhang21/EditGuard#pre-trained-model",
+        "purpose": "Reuse the exact degrade.pth from the previous digital experiment"
+      }
+    ],
+    "options": {
+      "weights": "degrade.pth"
+    },
+    "capability": {
+      "status": "needs_manual_asset",
+      "ecc": "none"
+    },
+    "notes": "Copyright64 only; localization scores are not common-message results. Reuse and hash the previous checkpoint.",
+    "validated_lock": "locks/legacy_editguard.lock"
+  },
+  {
+    "id": "omniguard",
+    "family": "OmniGuard copyright component",
+    "origin_group": "forensic_hybrid",
+    "track": "posthoc",
+    "backend": "python",
+    "adapter": "wmbench.adapters.extended:OmniGuardCopyrightAdapter",
+    "native_bits": 100,
+    "python": "3.10",
+    "environment": "ext_omniguard",
+    "validated_lock": "locks/extended_omniguard.lock",
+    "requirements": [
+      "torch==2.2.2",
+      "torchvision==0.17.2",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "huggingface-hub==0.34.4"
+    ],
+    "source": {
+      "url": "https://github.com/xuanyuzhang21/OmniGuard.git",
+      "revision": "2e3c86b3650cb904d2a8a112c640a78895aa93eb"
+    },
+    "assets": [],
+    "options": {
+      "weights": "omniguard-copyright-verified.pth"
+    },
+    "manual_assets": [
+      {
+        "path": "omniguard-copyright-verified.pth",
+        "url": "https://github.com/xuanyuzhang21/OmniGuard",
+        "note": "Requires matching trained copyright checkpoint; published localization weights are NOT interchangeable."
+      }
+    ],
+    "capability": {
+      "status": "needs_manual_asset",
+      "explanation": "Author copyright architecture/training schema (100 bits) is implemented, but a matching downloadable trained copyright checkpoint has not been verified. Published checkpoint.zip/demo loads anti-manipulation/localization networks, which cannot be treated as this bit decoder. Supply matching copyright state, then pass strict loading and preflight."
+    },
+    "author_checkpoint_reference": "https://drive.google.com/file/d/1khdBDUDIRIhPIKlV0ictcbTdWLh-WFY_/view?usp=sharing",
+    "notes": [
+      "Full OmniGuard localization masks are a different metric/track; this adapter covers only the copyright component.",
+      "Never substitute randomly initialized copyright weights or anti-manipulation checkpoints."
+    ]
+  },
+  {
+    "id": "sepwater",
+    "family": "SepWater",
+    "origin_group": "physical",
+    "track": "posthoc",
+    "backend": "python",
+    "adapter": "wmbench.adapters.physical:SepWater",
+    "native_bits": 100,
+    "python": "3.10",
+    "environment": "phys_sepwater",
+    "validated_lock": "locks/physical_sepwater.lock",
+    "requirements": [
+      "torch==2.0.1",
+      "torchvision==0.15.2",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "pytorch-lightning==1.8.6",
+      "torchmetrics==0.11.4",
+      "omegaconf==2.3.0",
+      "einops==0.6.1",
+      "lpips==0.1.4",
+      "kornia==0.6.12",
+      "transformers==4.30.2",
+      "open_clip_torch==2.20.0",
+      "taming-transformers-rom1504==0.0.6",
+      "huggingface-hub==0.34.4"
+    ],
+    "source": {
+      "url": "https://github.com/CVhnu/sepwater.git",
+      "revision": "4b99a4d3a99f504a09e5e743cffe745b8856e36a"
+    },
+    "assets": [],
+    "manual_assets": [
+      {
+        "url": "https://drive.google.com/drive/folders/1NC5q8BsrUntZ6y_5o267GXnaowoNXp90?usp=sharing",
+        "path": "sepwater.ckpt",
+        "purpose": "Full pretrained checkpoint containing ae.*, control.*, and decoder.* tensors; select the author release file, not the example images."
+      }
+    ],
+    "options": {
+      "weights": {
+        "checkpoint": "sepwater.ckpt"
+      }
+    },
+    "capability": {
+      "status": "needs_manual_asset",
+      "raw_bits": 100,
+      "ecc": "none",
+      "model_resolution": 224
+    },
+    "license": "CC-BY-NC-4.0",
+    "notes": "Concrete author encode/decode API. Native raw100 bypasses the optional text+BCH helper. Incomplete inference checkpoint keys are errors, never random initialization."
+  },
+  {
+    "id": "fang_screen",
+    "family": "Fang Screen-Shooting Resilient Watermarking",
+    "origin_group": "physical",
+    "track": "posthoc",
+    "backend": "matlab",
+    "adapter": "wmbench.adapters.physical:FangScreen",
+    "native_bits": 30,
+    "python": "3.10",
+    "environment": "phys_fang_matlab",
+    "validated_lock": "locks/physical_fang_screen.lock",
+    "requirements": [
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "huggingface-hub==0.34.4"
+    ],
+    "source": {
+      "url": "https://github.com/FangHanNUS/Screen-Shooting-Resilient-Watermarking.git",
+      "revision": "c544825f4a7fc4efd2d4aba2b21971b57593e8a6"
+    },
+    "assets": [],
+    "options": {
+      "timeout_seconds": 900
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "requires_matlab": true,
+      "useful_bits": 30,
+      "raw_bits": 64,
+      "model_resolution": 512,
+      "ecc": "CRC6 + BCH(63,36) + 1 padding bit"
+    },
+    "notes": "Licensed MATLAB plus Image Processing and Communications Toolboxes. Calls Embedding_test/Extracting_test directly; no GUI. Fails explicitly if the image has insufficient feature regions."
+  },
+  {
+    "id": "camera_shooting_instance",
+    "family": "Camera-Shooting Resilient Image Instance",
+    "origin_group": "physical",
+    "track": "posthoc",
+    "backend": "python",
+    "adapter": "wmbench.adapters.physical:UnavailablePhysicalCandidate",
+    "native_bits": 0,
+    "python": "3.10",
+    "environment": "phys_camera_instance_inventory",
+    "requirements": [],
+    "source": {
+      "url": "https://github.com/gyz-star/Camera-Shooting-Resilient-Watermarking-on-Image-Instance-Level.git",
+      "revision": "695d2471b8a88c7c127df8ec3f89571455e4b7d3"
+    },
+    "assets": [],
+    "manual_assets": [
+      {
+        "url": "https://pan.baidu.com/s/19gRqgIo_rDqUi5UnU5bhkQ?pwd=0518",
+        "path": "premodel.zip",
+        "purpose": "Author checkpoint bundle; Baidu password 0518. Access and inference interface not verified."
+      }
+    ],
+    "options": {
+      "unavailable_reason": "Author premodel.zip from Baidu is unavailable locally; instance segmentation/rectification plus payload interface need validation before integration."
+    },
+    "capability": {
+      "status": "integration_required"
+    }
+  }
+]

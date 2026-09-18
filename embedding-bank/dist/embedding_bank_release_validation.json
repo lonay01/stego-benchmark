@@ -1,0 +1,13 @@
+{
+  "notebook_sha256": "af9a320606987146541afbdacbe3f0b5f345e271a7494c57e8193944698e80ae",
+  "code_cells": [
+    2,
+    4,
+    6,
+    8
+  ],
+  "embedded_python_files": 32,
+  "embedded_source_sha256": "9736c8bfb5a32d59c9f622fd61eff2537bb02a623107c96870a3d78277897aac",
+  "packaged_registry_test": "PACKAGED_REGISTRY_OK: 32, no torch in controller",
+  "limitations": "Static and offline package checks, not Colab/GPU execution."
+}

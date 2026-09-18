@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wmbench-orchestrator"
+version = "0.1.0"
+description = "Isolated, resumable watermark evaluation through neural image channels"
+requires-python = ">=3.10"
+dependencies = ["numpy==1.26.4", "Pillow==10.4.0", "psutil==6.1.1"]
+
+[project.scripts]
+wmbench = "wmbench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

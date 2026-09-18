@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "inspection_date": "2026-09-18",
+  "scope": "Embedding-only bank additions; real pretrained GPU canaries have not been run on this host.",
+  "models": [
+    {
+      "id": "trustmark_b",
+      "payload_namespace": "trustmark",
+      "family": "TrustMark-B",
+      "origin_group": "digital",
+      "track": "posthoc",
+      "backend": "python",
+      "adapter": "wmbench.adapters.bank_additions:TrustMarkVariantAdapter",
+      "native_bits": 100,
+      "python": "3.10",
+      "environment": "bank_trustmark_b",
+      "requirements": ["torch==2.5.1", "torchvision==0.20.1", "numpy==1.26.4", "Pillow==10.4.0", "omegaconf==2.3.0", "einops==0.8.1", "torchmetrics==1.4.3", "lightning==2.4.0", "pytorch-lightning==2.4.0", "six==1.17.0"],
+      "source": {"url": "https://github.com/adobe/trustmark.git", "revision": "2ecb73ad28d1a3f66ac9dc19e1b667711f14314f"},
+      "assets": [
+        {"url": "https://cai-watermark.adobe.net/watermarking/trustmark-models/trustmark_B.yaml", "path": "trustmark_B.yaml", "author_md5": "fe40df84a7feeebfceb7a7678d7e6ec6"},
+        {"url": "https://cai-watermark.adobe.net/watermarking/trustmark-models/encoder_B.ckpt", "path": "encoder_B.ckpt", "author_md5": "e6ab35b3f2d02f37b418726a2dc0b9c9"},
+        {"url": "https://cai-watermark.adobe.net/watermarking/trustmark-models/decoder_B.ckpt", "path": "decoder_B.ckpt", "author_md5": "c4aaa4a86e551e6aac7f309331191971"}
+      ],
+      "options": {"variant": "B"},
+      "capability": {"status": "ready_unverified", "explanation": "Official encode/decode API, 100 raw bits with ECC disabled; author checksums enforced before model load. GPU and saved-PNG identity canary remain required."},
+      "notes": ["A checkpoint variant of TrustMark, not an independent architecture.", "Official native encode uses uint8 truncation and mean-removed/interpolated residuals. This is recorded, not replaced by a guessed Q implementation.", "Prepared files are SHA256 inventoried. Upstream-published MD5 is additionally checked at initialization."]
+    },
+    {
+      "id": "trustmark_p",
+      "payload_namespace": "trustmark",
+      "family": "TrustMark-P",
+      "origin_group": "digital",
+      "track": "posthoc",
+      "backend": "python",
+      "adapter": "wmbench.adapters.bank_additions:TrustMarkVariantAdapter",
+      "native_bits": 100,
+      "python": "3.10",
+      "environment": "bank_trustmark_p",
+      "requirements": ["torch==2.5.1", "torchvision==0.20.1", "numpy==1.26.4", "Pillow==10.4.0", "omegaconf==2.3.0", "einops==0.8.1", "torchmetrics==1.4.3", "lightning==2.4.0", "pytorch-lightning==2.4.0", "six==1.17.0"],
+      "source": {"url": "https://github.com/adobe/trustmark.git", "revision": "2ecb73ad28d1a3f66ac9dc19e1b667711f14314f"},
+      "assets": [
+        {"url": "https://cai-watermark.adobe.net/watermarking/trustmark-models/trustmark_P.yaml", "path": "trustmark_P.yaml", "author_md5": "fe40df84a7feeebfceb7a7678d7e6ec6"},
+        {"url": "https://cai-watermark.adobe.net/watermarking/trustmark-models/encoder_P.ckpt", "path": "encoder_P.ckpt", "author_md5": "0a18f6de6d57c6ef7dda30ce6154a775"},
+        {"url": "https://cai-watermark.adobe.net/watermarking/trustmark-models/decoder_P.ckpt", "path": "decoder_P.ckpt", "author_md5": "9450972bc0c3c217cb7b8220dd2f7a3c"}
+      ],
+      "options": {"variant": "P"},
+      "capability": {"status": "ready_unverified", "explanation": "Official variant-P API retains its 1.25 native strength multiplier and 224px decoder. 100 raw bits, ECC disabled. Real-weight saved-PNG canary remains required."},
+      "notes": ["A checkpoint variant of TrustMark, not an independent architecture.", "Official P native defaults differ from B/Q; these are retained and recorded.", "Official uint8 truncation precedes external scalar-only Matched Quality."]
+    },
+    {
+      "id": "fin",
+      "family": "FIN HEAVY",
+      "origin_group": "digital",
+      "track": "posthoc",
+      "backend": "python",
+      "adapter": "wmbench.adapters.bank_additions:FINAdapter",
+      "native_bits": 64,
+      "python": "3.10",
+      "environment": "bank_fin_heavy",
+      "requirements": ["torch==2.5.1", "torchvision==0.20.1", "numpy==1.26.4", "Pillow==10.4.0"],
+      "source": {"url": "https://github.com/QQiuyp/FIN.git", "revision": "f77222ffe9089a5a204e0fd37bd1e33a905be1ed"},
+      "assets": [
+        {"url": "https://raw.githubusercontent.com/QQiuyp/FIN/f77222ffe9089a5a204e0fd37bd1e33a905be1ed/experiments/HEAVY/FED.pt", "path": "FED.pt", "size_bytes": 9352345, "provenance": "Author HEAVY FED committed at the pinned revision"},
+        {"url": "https://raw.githubusercontent.com/QQiuyp/FIN/f77222ffe9089a5a204e0fd37bd1e33a905be1ed/experiments/HEAVY/INL.pt", "path": "INL.pt", "size_bytes": 20296575, "provenance": "Author HEAVY inverse-noise layer required by decode.py"}
+      ],
+      "options": {"weights": "FED.pt", "inl_weights": "INL.pt", "resolution_policy": "residual_128_to_512"},
+      "capability": {"status": "ready_unverified", "explanation": "Concrete FED/INL inference and strict state loading. Native FIN128 is transferred to the RGB512 carrier by explicit residual resizing; its clean recovery requires a real-image canary."},
+      "notes": ["Native here means selected FIN HEAVY plus disclosed resolution adaptation, not an unmodified 512px author network.", "Encoder messages are {-0.5,+0.5}; decoder applies inverse INL then inverse FED, threshold zero.", "No JPEG or other demo-time attack is applied during embedding.", "Failed identity decoding must be reported; do not silently switch FIN variant or tune residual strength to pass."]
+    },
+    {
+      "id": "fnns_omniseal",
+      "reserved_bits": {"0": 1, "1": 0, "2": 1, "3": 0, "4": 1, "5": 0, "6": 1, "7": 0, "8": 1, "9": 0, "10": 1, "11": 0, "12": 1, "13": 0, "14": 1, "15": 0},
+      "family": "FNNS (OmniSealBench 48-bit)",
+      "origin_group": "digital",
+      "track": "posthoc",
+      "backend": "python",
+      "adapter": "wmbench.adapters.bank_additions:FNNSAdapter",
+      "native_bits": 48,
+      "python": "3.10",
+      "environment": "bank_fnns",
+      "requirements": ["torch==2.5.1", "torchvision==0.20.1", "numpy==1.26.4", "Pillow==10.4.0"],
+      "source": {"url": "https://github.com/facebookresearch/omnisealbench.git", "revision": "bd141394a0dfeac0b4cfedfdb4feaebb2a2c6db6"},
+      "assets": [{"url": "https://dl.fbaipublicfiles.com/ssl_watermarking/decoder_48b.torchscript.pt", "path": "decoder_48b.torchscript.pt", "provenance": "Official OmniSealBench scripts/download_image_models.sh FNNS checkpoint; SHA256 captured on preparation"}],
+      "options": {"weights": "decoder_48b.torchscript.pt", "lambda_w": 1.3, "nsteps": 10, "detection_prefix": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]},
+      "payload_layout": {"fixed_prefix": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0], "detection_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "filler_indices": [16, 17], "common_indices": [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47]},
+      "capability": {"status": "ready_unverified", "explanation": "Pinned OmniSealBench FNNS image-optimization algorithm and pretrained TorchScript decoder. 16 fixed prefix bits + 2 deterministic filler bits + 30 common bits; GPU identity canary unrun."},
+      "notes": ["The orchestrator must honor payload_layout.fixed_prefix; ordinary all-random padding is rejected.", "Optimization requires image gradients; do not use global inference_mode/no_grad for embed.", "Upstream build_model fixes initialization seed42, with Adam lr0.5, 10 steps and lambda_w1.3; retained without identity-driven tuning.", "Only the root benchmark initializer is bypassed to avoid importing unrelated audio infrastructure; image model source executes unchanged."]
+    },
+    {
+      "id": "distseal_posthoc_dcae",
+      "family": "DistSeal post-hoc DC-AE-f64c128",
+      "origin_group": "generative_editing",
+      "track": "posthoc",
+      "backend": "python",
+      "adapter": "wmbench.adapters.bank_additions:DistSealPosthocAdapter",
+      "native_bits": 64,
+      "python": "3.10",
+      "environment": "bank_distseal",
+      "requirements": ["torch==2.5.1", "torchvision==0.20.1", "numpy==1.26.4", "Pillow==10.4.0", "omegaconf==2.3.0", "einops==0.8.1", "timm==1.0.20", "diffusers==0.34.0", "transformers==4.49.0", "huggingface-hub==0.34.4", "accelerate==1.10.1", "safetensors==0.6.2", "scipy==1.15.3", "opencv-python-headless==4.11.0.86"],
+      "source": {"url": "https://github.com/facebookresearch/distseal.git", "revision": "d0a71cd272bb29e3b49cdc965bbaf4d24f2684ac"},
+      "assets": [
+        {"url": "https://dl.fbaipublicfiles.com/distseal/detector_dcae_diffusion.pt", "path": "detector_dcae_diffusion.pt", "provenance": "Official cards/detector_dc-ae.yaml includes post-hoc embedder and extractor; dimensions and strict load checked at initialization"},
+        {"kind": "hf_snapshot", "repo_id": "mit-han-lab/dc-ae-f64c128-in-1.0-diffusers", "revision": "d58275ea9674845e5e36cbf280987f67bee0e85c", "path": "dcae", "ignore_patterns": ["assets/*", "*.gif", "*.jpg", "*.png", ".gitattributes"]}
+      ],
+      "options": {"weights": "detector_dcae_diffusion.pt", "autoencoder_path": "dcae", "autoencoder_revision": "d58275ea9674845e5e36cbf280987f67bee0e85c", "scaling_w": 0.5},
+      "capability": {"status": "ready_unverified", "explanation": "Concrete official post-hoc latent path on existing RGB512 images. Pretrained inference on the target GPU and saved-PNG decoding are untested here."},
+      "notes": ["No text-to-image/diffusion generator is loaded; this is the existing-image post-hoc mode.", "Native output includes DC-AE reconstruction change; quality reference must remain original COCO, never reconstructed unmarked output.", "Uses scaling_w0.5 from the inference model card, not the training schedule initial value1.5.", "The fixed generation-time signature .npy file is intentionally not loaded: the selected post-hoc embedder receives our arbitrary 64-bit payload.", "Do not promise that Matched39/42/45 preserves decodability; coverage and identity BER must be reported independently."]
+    }
+  ]
+}

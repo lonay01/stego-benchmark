@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+*.egg-info/
+embedding-bank/validation/
+embedding-bank/cache/
+embedding-bank/scratch/
+embedding-bank/.env

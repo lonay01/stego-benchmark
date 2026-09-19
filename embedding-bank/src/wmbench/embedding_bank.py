@@ -202,6 +202,47 @@ def bank_registry(project: Path) -> dict:
     return {name: models[name] for name in MODEL_IDS}
 
 
+def freeze_bank_identity(project: Path, bank: Path, identity: dict) -> dict:
+    """Permit only explicitly audited code-only hotfixes; retain the original seal.
+
+    Dataset, registry and scientific policy must still match exactly. The audit
+    records both source hashes; it never rewrites bank.json or saved PNG records.
+    """
+    path = bank / "bank.json"
+    if path.exists():
+        original = read_json(path)
+        if original != identity:
+            old_code = original.get("source_code_sha256")
+            new_code = identity.get("source_code_sha256")
+            comparable = {**identity, "source_code_sha256": old_code}
+            approved_path = project / "compatibility/embedding_bank_hotfixes.json"
+            approved = read_json(approved_path) if approved_path.is_file() else {}
+            entry = next(
+                (
+                    row
+                    for row in approved.get("transitions", [])
+                    if row["from_source_sha256"] == old_code and row["to_source_sha256"] == new_code
+                ),
+                None,
+            )
+            if original != comparable or entry is None:
+                raise ValueError(
+                    f"Frozen configuration differs: {path}. "
+                    "No audited compatible update; preserve this bank and use a NEW output folder."
+                )
+            _freeze(
+                bank / "_reports/source_compatibility" / f"{new_code}.json",
+                {"original_bank_identity": digest(original), **entry},
+            )
+            print(
+                "RESUME: audited controller hotfix; existing bank and PNG seals preserved.",
+                flush=True,
+            )
+        return original
+    _freeze(path, identity)
+    return identity
+
+
 def prepare_bank(project: Path, settings: dict) -> dict:
     bank = Path(settings["output_root"]).expanduser().resolve()
     scratch = Path(settings["scratch_root"]).expanduser().resolve()
@@ -227,7 +268,7 @@ def prepare_bank(project: Path, settings: dict) -> dict:
             }
         ),
     }
-    _freeze(bank / "bank.json", identity)
+    identity = freeze_bank_identity(project, bank, identity)
     _freeze(
         bank / "_inputs/messages.json",
         {r["image_id"]: common_message(r["image_id"]) for r in data["images"]},
@@ -454,6 +495,10 @@ def process_image(
 
 
 def _complete(bank, model, images, identity_check):
+    # Ineligible catalogue entries have no task signature. Let the controller
+    # record their prerequisite/integration blocker instead of aborting the queue.
+    if int(model["native_bits"]) < 30:
+        return False
     for image in images:
         expected = _signature(model, image, POLICY)
         for mode in MODES:
@@ -470,6 +515,16 @@ def _complete(bank, model, images, identity_check):
                 if checked["signature"] != expected:
                     raise ValueError(f"Saved identity-check signature differs: {path}")
     return True
+
+
+def _log_tail(path: Path, lines: int = 18) -> str:
+    """Bound notebook diagnostics without loading an entire model log into RAM."""
+    if not path.is_file():
+        return "Log file was not created."
+    with path.open("rb") as stream:
+        stream.seek(0, 2)
+        stream.seek(max(0, stream.tell() - 8192))
+        return "\n".join(stream.read().decode("utf-8", errors="replace").splitlines()[-lines:])
 
 
 def report(bank: Path, models: dict, images: list, selected: list) -> dict:
@@ -603,6 +658,8 @@ def run(project: Path, settings: dict) -> Path:
                 print("Session time budget exhausted. Run again to resume.", flush=True)
                 break
             reason = blocked_reason(model, manual)
+            if reason is None and int(model["native_bits"]) < 30:
+                reason = "unsupported_payload: no validated common30 payload interface"
             if reason:
                 write_json(state, {"status": "blocked", "reason": reason})
                 print(f"[{index}/{len(selected)}] BLOCKED {name}: {reason}", flush=True)
@@ -660,10 +717,11 @@ def run(project: Path, settings: dict) -> Path:
                         "--config",
                         str(job_path),
                     ]
+                    log_path = meta / "logs" / f"{session}_{stage}.log"
                     stats = monitored_process(
                         command,
                         env,
-                        meta / "logs" / f"{session}_{stage}.log",
+                        log_path,
                         slot,
                         min(float(minutes) * 60, remaining),
                         limits,
@@ -671,8 +729,13 @@ def run(project: Path, settings: dict) -> Path:
                     )
                     write_json(meta / "timings" / f"{session}_{stage}.json", stats)
                     if stats["exit_code"] or stats["reason"]:
+                        print(
+                            f"{stage.upper()} ERROR {name}; log: {log_path}\n{_log_tail(log_path)}",
+                            flush=True,
+                        )
                         raise RuntimeError(
-                            stats["reason"] or f"{stage} failed; see {meta / 'logs'}"
+                            stats["reason"]
+                            or f"{stage} exited with code {stats['exit_code']}; see {log_path}"
                         )
                 write_json(state, {"status": "processed", "reason": ""})
             except Exception as error:

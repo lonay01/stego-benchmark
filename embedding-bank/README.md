@@ -167,6 +167,12 @@ with a reason rather than fall back silently to another implementation.
 
 ### Colab Pro+
 
+Download both `COCO100_Embedding_Bank_RESUMABLE.ipynb` and
+`COCO100_Embedding_Bank_source.zip` from the same release. Open the notebook in
+Colab and upload the ZIP when cell 2 asks for it. Alternatively, put the ZIP on
+Drive and set `SOURCE_ARCHIVE` to that path. No Base64 source is embedded in the
+notebook. The ZIP checksum pins the exact readable Python files used by the run.
+
 Colab with an NVIDIA GPU is the preferred first target for the Python model
 environments. Mount Drive and use:
 
@@ -238,7 +244,13 @@ increase to 100 without changing the scientific settings.
   permission to silently merge newly computed outputs from changed checkpoints,
   payload mappings or numerical settings.
 - Resume is pinned to this source release. Changing source code or the scientific
-  policy requires a new bank or an explicitly audited migration. Changing only
+  policy requires a new bank or an explicitly audited migration. The controller
+  hotfix for the Camera-Shooting Instance queue crash accepts exactly the known
+  previous source fingerprint listed in `compatibility/embedding_bank_hotfixes.json`,
+  and only when the dataset, complete registry and policy still match. It keeps
+  `bank.json`, image records and PNGs unchanged and writes a separate audit receipt
+  under `_reports/source_compatibility/`. It is not a general hash-check bypass.
+  Changing only
   the image count, storage paths or runtime does not change saved PNG identities.
   Checkpoint hashes are frozen per method; new runtime/library details remain
   separate execution records. Cross-hardware numerical equivalence is not assumed.

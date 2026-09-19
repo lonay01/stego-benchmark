@@ -1,7 +1,7 @@
 {
-  "notebook_sha256": "af9a320606987146541afbdacbe3f0b5f345e271a7494c57e8193944698e80ae",
-  "source_zip_sha256": "0924f9885c81f965c8e3a9597d49c6bf734ee78b571540c853dd0bb45f290d36",
-  "embedded_source_sha256": "9736c8bfb5a32d59c9f622fd61eff2537bb02a623107c96870a3d78277897aac",
+  "notebook_sha256": "91f75d105792b5792396f45984100d3fed7cfca717c313966bd85acb18bdf4ae",
+  "source_zip_sha256": "dc11dfb451be2af230fe3d18dc85f71d47f41a12ddedb993d3c334ae8e7277d4",
+  "packaging": "external source ZIP; no Base64 in notebook",
   "models": [
     "trustmark_q",
     "wam",

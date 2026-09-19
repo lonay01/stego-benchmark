@@ -1,13 +1,13 @@
 {
-  "notebook_sha256": "af9a320606987146541afbdacbe3f0b5f345e271a7494c57e8193944698e80ae",
+  "notebook_sha256": "91f75d105792b5792396f45984100d3fed7cfca717c313966bd85acb18bdf4ae",
   "code_cells": [
     2,
     4,
     6,
     8
   ],
-  "embedded_python_files": 32,
-  "embedded_source_sha256": "9736c8bfb5a32d59c9f622fd61eff2537bb02a623107c96870a3d78277897aac",
+  "source_zip_python_files": 40,
+  "source_zip_sha256": "dc11dfb451be2af230fe3d18dc85f71d47f41a12ddedb993d3c334ae8e7277d4",
   "packaged_registry_test": "PACKAGED_REGISTRY_OK: 32, no torch in controller",
   "limitations": "Static and offline package checks, not Colab/GPU execution."
 }

@@ -1,9 +1,8 @@
-"""Build the self-contained bank notebook and a source-only reproducible release."""
+"""Build a readable bank notebook and its separate, checksum-pinned source ZIP."""
 
 from __future__ import annotations
 
 import ast
-import base64
 import hashlib
 import io
 import json
@@ -28,6 +27,7 @@ N_IMAGES = 5                         # 100 for the complete image bank
 MODELS = "all"                       # All 32 requested catalogue entries
 DEVICE = "cuda"                      # "cpu" only for a CPU-capable local test
 IDENTITY_CHECK = True                # Decode saved PNGs once; no attacks
+SOURCE_ARCHIVE = Path("COCO100_Embedding_Bank_source.zip")  # Upload this ZIP alongside the notebook
 
 if IN_COLAB:
     OUTPUT_ROOT = Path("/content/drive/MyDrive/watermarking_embedding_bank_v1")
@@ -53,7 +53,7 @@ print("Images per model:", N_IMAGES, "| One 30-bit message per image | Four mode
 """
 
 BOOTSTRAP = """# Source bundle only: model weights are downloaded one method at a time.
-import base64, hashlib, io, zipfile, sysconfig
+import hashlib, io, zipfile
 if IN_COLAB:
     drive.mount("/content/drive")
     if not Path("/content/drive/MyDrive").is_dir():
@@ -66,12 +66,17 @@ if not shutil.which("git"):
     raise RuntimeError("Git is required for pinned model sources. Install Git and restart Jupyter.")
 
 SCRATCH_ROOT.mkdir(parents=True, exist_ok=True)
-PAYLOAD_SHA256 = "__CHECKSUM__"
-PAYLOAD_BASE64 = "__PAYLOAD__"
-payload = base64.b64decode(PAYLOAD_BASE64)
-if hashlib.sha256(payload).hexdigest() != PAYLOAD_SHA256:
-    raise ValueError("Embedded source bundle checksum mismatch")
-PROJECT = SCRATCH_ROOT / "source" / PAYLOAD_SHA256[:16]
+SOURCE_SHA256 = "__CHECKSUM__"
+if not SOURCE_ARCHIVE.is_file() and IN_COLAB:
+    from google.colab import files
+    print("Upload COCO100_Embedding_Bank_source.zip from the SAME release as this notebook.")
+    files.upload()
+if not SOURCE_ARCHIVE.is_file():
+    raise FileNotFoundError(f"Source ZIP not found: {SOURCE_ARCHIVE.resolve()}. Upload the ZIP or set SOURCE_ARCHIVE to its path on Drive.")
+payload = SOURCE_ARCHIVE.read_bytes()
+if hashlib.sha256(payload).hexdigest() != SOURCE_SHA256:
+    raise ValueError("Source ZIP checksum mismatch. Use the ZIP supplied with THIS notebook; do not bypass this check.")
+PROJECT = SCRATCH_ROOT / "source" / SOURCE_SHA256[:16]
 PROJECT.mkdir(parents=True, exist_ok=True)
 with zipfile.ZipFile(io.BytesIO(payload)) as archive:
     for member in archive.infolist():
@@ -175,15 +180,30 @@ def build():
     files["README.md"] = files["docs/EMBEDDING_BANK.md"]
     files["THIRD_PARTY.md"] = (ROOT / "THIRD_PARTY.md").read_bytes()
     files["pyproject.toml"] = (ROOT / "pyproject.toml").read_bytes()
+    files["compatibility/embedding_bank_hotfixes.json"] = (
+        ROOT / "compatibility/embedding_bank_hotfixes.json"
+    ).read_bytes()
+    for relative in (
+        "scripts/build_embedding_bank.py",
+        "scripts/check_embedding_bank_release.py",
+        "scripts/smoke_embedding_bank.py",
+        "tests/test_embedding_bank.py",
+        "tests/test_bank_additions.py",
+        "tests/test_embedding_bank_resume.py",
+        "tests/test_embedding_bank_hotfix.py",
+        "tests/test_embedding_bank_release.py",
+    ):
+        files[relative] = (ROOT / relative).read_bytes()
     payload = zip_bytes(files)
     checksum = hashlib.sha256(payload).hexdigest()
-    bootstrap = BOOTSTRAP.replace("__CHECKSUM__", checksum).replace(
-        "__PAYLOAD__", base64.b64encode(payload).decode()
-    )
+    bootstrap = BOOTSTRAP.replace("__CHECKSUM__", checksum)
     pieces = [
         (
             "markdown",
             "# COCO100 — reusable embedding bank\n\n"
+            "**Two files:** upload this notebook and the accompanying "
+            "`COCO100_Embedding_Bank_source.zip`. The second cell asks for the ZIP "
+            "if it is not present. Python source stays in ordinary files, not Base64.\n\n"
             "Prepare Native and PSNR39/42/45 PNGs once, then reuse them in all three channels. "
             "No attacks, training, calibration or generation-time methods run here.\n\n"
             "One image-specific 30-bit message is shared by all methods and modes. "
@@ -202,7 +222,8 @@ def build():
         (
             "markdown",
             "## 2. Source bundle and lightweight controller\n\n"
-            "This is source code, not an executable checkpoint bundle. Each model gets "
+            "Upload the source ZIP supplied with this notebook when prompted. "
+            "It contains readable Python source, not model checkpoints. Each model gets "
             "its own Python environment. Preserve the exact originals and manifest from the earlier runs.",
         ),
         ("code", bootstrap),
@@ -246,23 +267,12 @@ def build():
     name = "COCO100_Embedding_Bank_RESUMABLE.ipynb"
     contents = json.dumps(notebook, indent=1, ensure_ascii=False).encode("utf-8")
     (dist / name).write_bytes(contents)
-    files[name] = contents
-    for relative in (
-        "scripts/build_embedding_bank.py",
-        "scripts/check_embedding_bank_release.py",
-        "scripts/smoke_embedding_bank.py",
-        "tests/test_embedding_bank.py",
-        "tests/test_bank_additions.py",
-        "tests/test_embedding_bank_resume.py",
-    ):
-        if (ROOT / relative).exists():
-            files[relative] = (ROOT / relative).read_bytes()
-    release = zip_bytes(files)
-    (dist / "COCO100_Embedding_Bank_source.zip").write_bytes(release)
+    (ROOT / name).write_bytes(contents)
+    (dist / "COCO100_Embedding_Bank_source.zip").write_bytes(payload)
     evidence = {
         "notebook_sha256": hashlib.sha256(contents).hexdigest(),
-        "source_zip_sha256": hashlib.sha256(release).hexdigest(),
-        "embedded_source_sha256": checksum,
+        "source_zip_sha256": checksum,
+        "packaging": "external source ZIP; no Base64 in notebook",
         "models": list(registry),
         "statically_checked_code_cells": sum(c["cell_type"] == "code" for c in cells),
     }

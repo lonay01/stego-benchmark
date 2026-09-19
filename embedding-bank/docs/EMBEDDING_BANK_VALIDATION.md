@@ -5,7 +5,7 @@ neural-channel experiment. No full COCO100 run was launched during development.
 
 ## Automated checks
 
-43 offline unit tests passed in the local CPU validation environment:
+The original release passed 43 offline unit tests in the local CPU validation environment:
 
 - 16 bank tests: deterministic messages, reserved positions, 100-file input
   freeze, exact scalar pixels, PSNR tolerance, resume, corruption and relocation.
@@ -17,7 +17,7 @@ neural-channel experiment. No full COCO100 run was launched during development.
   control flow. These do **not** validate real new-model checkpoints.
 
 Ruff checks and formatting were applied to the new source and tests. Every code
-cell in the delivered notebook is compiled. The embedded ZIP is checksum-checked,
+cell in the delivered notebook is compiled. The separate source ZIP is checksum-checked,
 its Python source parsed, and its 32-entry registry imported in a separate
 process after extraction to a different directory. No Torch import is required
 by that controller/package check.
@@ -34,6 +34,22 @@ The development CPU environment used Python 3.12.14, NumPy 1.26.4,
 Pillow 10.4.0, Torch 2.5.1+cpu and ONNX Runtime 1.20.1. Production model
 environments retain their own registered dependency versions; those are not
 silently replaced with this test environment.
+
+## Controller hotfix validation
+
+The updated suite has 56 tests: the original 43 plus 13 regressions for the unsupported Camera
+entry, continuation through all five following methods, bounded worker-error
+logs, audited code-only resume and rejection of scientific changes. The actual
+notebook ZIP-extraction code is tested with valid, mismatched, path-traversing and
+locally modified source bundles. These checks do not load GPU models.
+
+The old source was extracted from the user-supplied executed notebook. Its source
+ZIP hash is `9736c8bfb5a32d59c9f622fd61eff2537bb02a623107c96870a3d78277897aac`.
+Only `src/wmbench/embedding_bank.py` changed among runtime source files. The full
+registry is unchanged. AST comparison confirmed that message construction, task
+signatures, image processing, decoder checks and model identity normalization
+remain unchanged. Payload comparisons for all 31 payload-capable entries on five
+test IDs were identical (155 comparisons).
 
 ## Real cached-model smoke
 
@@ -60,6 +76,10 @@ Its table is an interface check on one image, not a model ranking.
 Reproduction script: `scripts/smoke_embedding_bank.py`. It requires an existing
 local source/weight cache and refuses network connections. Original local evidence
 is under `validation/embedding_bank_cpu_20260918_183445/`.
+The controller hotfix was also checked with the same four cached implementations
+and the same fixture: all four interface/resume checks passed. Local evidence is
+under `validation/embedding_bank_cpu_20260919_194354/`. Validation image banks and
+model weights are not included in the public source bundle.
 
 ## Not established by these checks
 

@@ -1,9 +1,8 @@
-"""Check shipped notebook cells, embedded source, registry and relocation offline."""
+"""Check shipped notebook cells, separate source ZIP and relocation offline."""
 
 from __future__ import annotations
 
 import ast
-import base64
 import hashlib
 import io
 import json
@@ -35,8 +34,10 @@ def main():
                 for target in node.targets:
                     if isinstance(target, ast.Name):
                         constants[target.id] = node.value.value
-    payload = base64.b64decode(constants["PAYLOAD_BASE64"])
-    assert hashlib.sha256(payload).hexdigest() == constants["PAYLOAD_SHA256"]
+    assert "PAYLOAD_BASE64" not in constants
+    assert notebook.read_bytes() == (ROOT / notebook.name).read_bytes()
+    payload = (ROOT / "dist/COCO100_Embedding_Bank_source.zip").read_bytes()
+    assert hashlib.sha256(payload).hexdigest() == constants["SOURCE_SHA256"]
     python_files = 0
     with tempfile.TemporaryDirectory(prefix="wmbench_release_") as directory:
         project = Path(directory)
@@ -46,6 +47,12 @@ def main():
                 if name.endswith(".py"):
                     ast.parse(bundle.read(name).decode("utf-8-sig"), filename=name)
                     python_files += 1
+                local = ROOT / name
+                if local.exists() and name != "README.md":
+                    if name == "registry/bank_models.json":
+                        assert json.loads(bundle.read(name)) == json.loads(local.read_bytes())
+                    else:
+                        assert bundle.read(name) == local.read_bytes(), name
             bundle.extractall(project)
         env = {**os.environ, "PYTHONPATH": str(project / "src")}
         command = [
@@ -65,8 +72,8 @@ def main():
     report = {
         "notebook_sha256": hashlib.sha256(notebook.read_bytes()).hexdigest(),
         "code_cells": checked,
-        "embedded_python_files": python_files,
-        "embedded_source_sha256": constants["PAYLOAD_SHA256"],
+        "source_zip_python_files": python_files,
+        "source_zip_sha256": constants["SOURCE_SHA256"],
         "packaged_registry_test": result.stdout.strip(),
         "limitations": "Static and offline package checks, not Colab/GPU execution.",
     }

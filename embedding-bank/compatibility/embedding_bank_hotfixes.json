@@ -1,0 +1,11 @@
+{
+  "transitions": [
+    {
+      "from_source_sha256": "546bb83e4f7c1b7e18eb63539e77d7eb8d7fa73ea16794e98fc287d062583105",
+      "to_source_sha256": "973fe0d19dc8115166bc69fdd28833ff0346099aa81ffa4e27a22ecc16b220fb",
+      "original_source_zip_sha256": "9736c8bfb5a32d59c9f622fd61eff2537bb02a623107c96870a3d78277897aac",
+      "changed_runtime_files": ["src/wmbench/embedding_bank.py"],
+      "reason": "Controller-only fix: treat unsupported payloads as blocked before task signatures; show failed-worker log tails; retain the original bank seal when resuming this audited transition. No adapter, registry, payload, image processing, matching, seed or checkpoint changes."
+    }
+  ]
+}

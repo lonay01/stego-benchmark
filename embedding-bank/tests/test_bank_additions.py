@@ -8,9 +8,9 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import numpy as np
 from PIL import Image
@@ -20,6 +20,8 @@ from wmbench.adapters.bank_additions import (
     FINAdapter,
     FNNSAdapter,
     TrustMarkVariantAdapter,
+    _freeze_parameters,
+    _load_distseal_inference_state,
     _source_namespace,
     _verified_trustmark_asset,
     validate_fnns_payload,
@@ -31,6 +33,114 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class BankAdditionTests(unittest.TestCase):
+    def test_scriptmodule_freeze_retains_input_gradients(self):
+        import torch
+
+        decoder = torch.jit.script(torch.nn.Linear(3, 48))
+        with self.assertRaisesRegex(RuntimeError, "not supported on ScriptModules"):
+            decoder.requires_grad_(False)
+        _freeze_parameters(decoder)
+        image = torch.ones((1, 3), requires_grad=True)
+        decoder(image).square().sum().backward()
+        self.assertIsNotNone(image.grad)
+        self.assertTrue(torch.isfinite(image.grad).all())
+        self.assertGreater(image.grad.abs().sum().item(), 0)
+        self.assertTrue(all(not p.requires_grad and p.grad is None for p in decoder.parameters()))
+
+    def test_distseal_loads_inference_weights_with_training_autoencoder(self):
+        import torch
+
+        model = torch.nn.Linear(3, 64)
+        state = {name: torch.ones_like(value) for name, value in model.state_dict().items()}
+        state["autoencoder.model.encoder.weight"] = torch.zeros(2, 2)
+        state["autoencoder.model.decoder.bias"] = torch.zeros(2)
+        counts = _load_distseal_inference_state(model, state)
+        self.assertEqual(counts, {"loaded_keys": 2, "unused_training_autoencoder_keys": 2})
+        self.assertEqual(len(state), 4)  # filtering does not mutate the original checkpoint
+        self.assertTrue(all(torch.all(value == 1) for value in model.state_dict().values()))
+
+    def test_distseal_keeps_strict_missing_unexpected_and_shape_checks(self):
+        import torch
+
+        model = torch.nn.Linear(3, 64)
+        state = model.state_dict()
+        for problem, broken in (
+            ("Missing key", {"weight": state["weight"]}),
+            ("Unexpected key", {**state, "unrecognized.weight": torch.zeros(1)}),
+            ("Unexpected key", {**state, "autoencoder.other.weight": torch.zeros(1)}),
+            ("size mismatch", {**state, "weight": torch.zeros(1, 1)}),
+        ):
+            with self.subTest(problem=problem, keys=list(broken)):
+                with self.assertRaisesRegex(RuntimeError, problem):
+                    _load_distseal_inference_state(model, broken)
+
+    def test_distseal_does_not_ignore_required_autoencoder_weights(self):
+        import torch
+
+        model = torch.nn.Module()
+        model.autoencoder = torch.nn.Module()
+        model.autoencoder.model = torch.nn.Linear(3, 4)
+        with self.assertRaisesRegex(ValueError, "unexpectedly owns"):
+            _load_distseal_inference_state(model, model.state_dict())
+
+    def test_distseal_accepts_clean_inference_only_state(self):
+        import torch
+
+        model = torch.nn.Linear(3, 64)
+        counts = _load_distseal_inference_state(model, model.state_dict())
+        self.assertEqual(counts["unused_training_autoencoder_keys"], 0)
+        with self.assertRaisesRegex(ValueError, "named state dictionary"):
+            _load_distseal_inference_state(model, {1: torch.zeros(1)})
+
+    def test_distseal_constructor_loads_separate_pinned_autoencoder(self):
+        # Real torch state validation; deliberately tiny substituted networks.
+        import torch
+
+        network = torch.nn.Linear(3, 64)
+        network.blender = SimpleNamespace(scaling_w=0)
+        state = dict(network.state_dict())
+        state["autoencoder.model.encoder.weight"] = torch.zeros(2, 2)
+        dcae = torch.nn.Identity()
+        loader = Mock(return_value=dcae)
+        diffusers = ModuleType("diffusers")
+        diffusers.AutoencoderDC = SimpleNamespace(from_pretrained=loader)
+        cfg = ModuleType("distseal.utils.cfg")
+        cfg.get_config_from_checkpoint = Mock(
+            return_value=SimpleNamespace(
+                args=SimpleNamespace(nbits=64, attenuation="none", get=lambda _key: "none")
+            )
+        )
+        cfg.setup_model = Mock(return_value=network)
+        modules = {
+            "diffusers": diffusers,
+            "distseal": ModuleType("distseal"),
+            "distseal.utils": ModuleType("distseal.utils"),
+            "distseal.utils.cfg": cfg,
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "dcae").mkdir()
+            (root / "dcae/config.json").write_text("{}")
+            torch.save({"model": state}, root / "checkpoint.pt")
+            with patch.dict(sys.modules, modules):
+                adapter = DistSealPosthocAdapter(
+                    {
+                        "repo_root": str(root),
+                        "asset_root": str(root),
+                        "weights": "checkpoint.pt",
+                        "device": "cpu",
+                        "scaling_w": 0.5,
+                        "autoencoder_revision": "test-only-revision",
+                    }
+                )
+            self.assertIs(adapter.autoencoder, dcae)
+            self.assertEqual(adapter.checkpoint_loading["unused_training_autoencoder_keys"], 1)
+            self.assertEqual(adapter.model.blender.scaling_w, 0.5)
+            self.assertTrue(all(not p.requires_grad for p in adapter.model.parameters()))
+            loader.assert_called_once_with(
+                str(root / "dcae"), local_files_only=True, torch_dtype=torch.float32
+            )
+
     def test_import_does_not_load_heavy_frameworks(self):
         code = (
             "import sys; from wmbench.adapters import bank_additions; "

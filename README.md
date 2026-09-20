@@ -13,8 +13,10 @@ at 39, 42 and 45 dB, with resumable per-image records.
 - [Downloadable source bundle](embedding-bank/dist/COCO100_Embedding_Bank_source.zip)
 
 Download the notebook **and** source ZIP from the same release. Cell 2 prompts
-for the ZIP; no Base64 source is embedded in the notebook. The controller fix
-for Camera-Shooting Instance records its blocker and continues the queue.
+for the ZIP; no Base64 source is embedded in the notebook. The latest loader fix
+supports FNNS TorchScript parameter freezing and strictly loads DistSeal's
+inference weights without its unused training-autoencoder subtree. Audited
+resume keeps previously saved results; see the validation record for limits.
 
 Start with `N_IMAGES = 5`; increase it to `100` after checking the canary run.
 The bank uses **one deterministic 30-bit message per image**, shared across

@@ -37,7 +37,7 @@ silently replaced with this test environment.
 
 ## Controller hotfix validation
 
-The updated suite has 56 tests: the original 43 plus 13 regressions for the unsupported Camera
+That controller update passed 56 tests: the original 43 plus 13 regressions for the unsupported Camera
 entry, continuation through all five following methods, bounded worker-error
 logs, audited code-only resume and rejection of scientific changes. The actual
 notebook ZIP-extraction code is tested with valid, mismatched, path-traversing and
@@ -50,6 +50,66 @@ registry is unchanged. AST comparison confirmed that message construction, task
 signatures, image processing, decoder checks and model identity normalization
 remain unchanged. Payload comparisons for all 31 payload-capable entries on five
 test IDs were identical (155 comparisons).
+
+## FNNS / DistSeal loader fix (September 20)
+
+The supplied Colab run failed during initialization of these two models:
+
+- FNNS called `requires_grad_(False)` on a TorchScript module. TorchScript rejects
+  that module-level operation. The adapter now freezes each parameter separately;
+  the input-image/distortion gradients required by FNNS remain enabled.
+- DistSeal's checkpoint contains 418 extra `autoencoder.model.*` keys. The pinned
+  upstream `setup_model` constructs VideoWam without that training autoencoder.
+  The adapter now excludes only that exact subtree before `strict=True` loading.
+  Missing inference weights, unknown other keys and tensor-shape mismatches
+  still fail. The separate, registered diffusers DC-AE checkpoint is unchanged.
+
+The current suite contains **67 tests**. The eleven added regressions cover actual
+TorchScript input gradients with frozen weights, strict DistSeal tensor loading,
+the constructor's separate autoencoder path using small substituted networks,
+guarded migration/resume, and notebook upload of a new source ZIP when an older
+release is already present. Tests using substituted networks do not establish
+successful loading of the full pretrained DistSeal pipeline.
+
+The migration accepts only the two known previous source fingerprints, with an
+unchanged dataset, registry and policy. Before its first receipt is written, both
+affected methods must have no saved model identity, image records or PNGs.
+Existing results from other methods are not modified. A receipt bound to this
+bank permits later resumes of newly produced outputs. Different scientific
+settings, unknown source hashes and mismatched receipts remain errors.
+
+### Real FNNS checkpoint smoke
+
+The official 48-bit decoder was downloaded from
+[Meta's checkpoint host](https://dl.fbaipublicfiles.com/ssl_watermarking/decoder_48b.torchscript.pt).
+Its SHA256 is
+`d6f0c052efb0a26869322ee657d9982bba79b32c2e0305fd4339aff45b58ac49`.
+The test used the registered OmniSealBench revision
+`bd141394a0dfeac0b4cfedfdb4feaebb2a2c6db6`, Torch 2.5.1+cpu and
+Torchvision 0.20.1+cpu. It retained the registered 10 optimization steps,
+strength, seed and payload layout. Network access was disabled during inference.
+
+One real RGB512 image passed Native embedding, all three matched targets, PNG
+serialization and clean decoding. All four records were sealed. A second call
+performed no embedding or decoding and preserved file hashes. This took about
+36 seconds on the local CPU. It is not a Colab timing estimate or a robustness result.
+Local evidence is `validation/fnns_loader_fix_20260920/report.json`; the input
+hash is the same fixture hash documented below.
+
+Reproduce in a CPU environment with the registered FNNS requirements and cached inputs:
+
+```bash
+python scripts/smoke_fnns_bank.py \
+  --repository /path/to/pinned/omnisealbench \
+  --checkpoint /path/to/decoder_48b.torchscript.pt \
+  --image /path/to/rgb512.png \
+  --output /path/to/new-smoke-directory
+```
+
+The full pretrained DistSeal autoencoder/embedder/detector has **not** been run
+locally by this validation. Re-run its five-image Colab canary before treating
+that method as validated. No existing scientific result is relabelled as passing
+because a loader regression test passes.
 
 ## Real cached-model smoke
 
@@ -84,7 +144,7 @@ model weights are not included in the public source bundle.
 ## Not established by these checks
 
 - All 32 models running successfully on Colab, Windows or any particular GPU.
-- Real pretrained inference for the five newly added adapters.
+- Full pretrained DistSeal inference or five-image GPU coverage for the fixed loaders.
 - Availability of EditGuard, OmniGuard and SepWater manual checkpoints.
 - Licensed MATLAB/toolboxes for Fang or a working Camera-Shooting Instance adapter.
 - Detection calibration, robustness under attacks, or research conclusions from COCO100.

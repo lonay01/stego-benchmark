@@ -67,13 +67,19 @@ if not shutil.which("git"):
 
 SCRATCH_ROOT.mkdir(parents=True, exist_ok=True)
 SOURCE_SHA256 = "__CHECKSUM__"
-if not SOURCE_ARCHIVE.is_file() and IN_COLAB:
+payload = SOURCE_ARCHIVE.read_bytes() if SOURCE_ARCHIVE.is_file() else None
+if IN_COLAB and (payload is None or hashlib.sha256(payload).hexdigest() != SOURCE_SHA256):
     from google.colab import files
-    print("Upload COCO100_Embedding_Bank_source.zip from the SAME release as this notebook.")
-    files.upload()
-if not SOURCE_ARCHIVE.is_file():
+    print("Source ZIP is absent or belongs to another release. Upload COCO100_Embedding_Bank_source.zip supplied with THIS notebook.")
+    uploaded = files.upload()
+    matching = [(name, data) for name, data in uploaded.items()
+                if hashlib.sha256(data).hexdigest() == SOURCE_SHA256]
+    if not matching:
+        raise ValueError("Source ZIP checksum mismatch. Upload the ZIP supplied with THIS notebook; do not bypass this check.")
+    uploaded_name, payload = matching[0]
+    print("Verified uploaded source:", uploaded_name)
+if payload is None:
     raise FileNotFoundError(f"Source ZIP not found: {SOURCE_ARCHIVE.resolve()}. Upload the ZIP or set SOURCE_ARCHIVE to its path on Drive.")
-payload = SOURCE_ARCHIVE.read_bytes()
 if hashlib.sha256(payload).hexdigest() != SOURCE_SHA256:
     raise ValueError("Source ZIP checksum mismatch. Use the ZIP supplied with THIS notebook; do not bypass this check.")
 PROJECT = SCRATCH_ROOT / "source" / SOURCE_SHA256[:16]
@@ -187,6 +193,7 @@ def build():
         "scripts/build_embedding_bank.py",
         "scripts/check_embedding_bank_release.py",
         "scripts/smoke_embedding_bank.py",
+        "scripts/smoke_fnns_bank.py",
         "tests/test_embedding_bank.py",
         "tests/test_bank_additions.py",
         "tests/test_embedding_bank_resume.py",

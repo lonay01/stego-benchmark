@@ -4,7 +4,9 @@ import hashlib
 import importlib.util
 from pathlib import Path
 import tempfile
+from types import ModuleType, SimpleNamespace
 import unittest
+from unittest.mock import Mock, patch
 
 
 PROJECT = Path(__file__).resolve().parents[1]
@@ -63,6 +65,42 @@ class ExternalSourceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Modified release source"):
             self.extract(payload)
         self.assertEqual(target.read_bytes(), b"modified\n")
+
+    def colab_upload(self, returned, expected):
+        # Run the actual source-extraction block; Drive/GPU checks precede it.
+        prefix = (
+            "import hashlib, io, zipfile\nSCRATCH_ROOT.mkdir"
+            + builder.BOOTSTRAP.split("SCRATCH_ROOT.mkdir", 1)[1].split(
+                "# The kernel never receives Torch"
+            )[0]
+        )
+        namespace = {
+            "Path": Path,
+            "IN_COLAB": True,
+            "SCRATCH_ROOT": self.root / "scratch",
+            "SOURCE_ARCHIVE": self.archive,
+        }
+        colab = ModuleType("google.colab")
+        colab.files = SimpleNamespace(upload=Mock(return_value=returned))
+        with patch.dict("sys.modules", {"google.colab": colab}):
+            exec(
+                compile(prefix.replace("__CHECKSUM__", expected), "colab_upload", "exec"), namespace
+            )
+        colab.files.upload.assert_called_once()
+        return namespace["PROJECT"]
+
+    def test_colab_asks_for_new_zip_when_old_release_is_present(self):
+        old = builder.zip_bytes({"source.py": b"old\n"})
+        new = builder.zip_bytes({"source.py": b"fixed\n"})
+        self.archive.write_bytes(old)
+        project = self.colab_upload({"source (1).zip": new}, hashlib.sha256(new).hexdigest())
+        self.assertEqual((project / "source.py").read_bytes(), b"fixed\n")
+        self.assertEqual(self.archive.read_bytes(), old)
+
+    def test_colab_rejects_wrong_uploaded_release(self):
+        wrong = builder.zip_bytes({"source.py": b"wrong\n"})
+        with self.assertRaisesRegex(ValueError, "checksum mismatch"):
+            self.colab_upload({"wrong.zip": wrong}, "0" * 64)
 
 
 if __name__ == "__main__":

@@ -230,12 +230,27 @@ def freeze_bank_identity(project: Path, bank: Path, identity: dict) -> dict:
                     f"Frozen configuration differs: {path}. "
                     "No audited compatible update; preserve this bank and use a NEW output folder."
                 )
-            _freeze(
-                bank / "_reports/source_compatibility" / f"{new_code}.json",
-                {"original_bank_identity": digest(original), **entry},
-            )
+            receipt = bank / "_reports/source_compatibility" / f"{new_code}.json"
+            # Adapter-loader fixes may be safe only before affected models have
+            # produced outputs. Check once, then bind the migration receipt to
+            # this bank so the next resume can reuse NEW outputs from the fix.
+            if not receipt.exists():
+                for name in entry.get("requires_empty_models", []):
+                    if name not in original["models"] or Path(name).name != name:
+                        raise ValueError(f"Invalid model in audited source transition: {name}")
+                    model_dir = bank / name
+                    if (
+                        (model_dir / "_meta/model_identity.json").exists()
+                        or any((model_dir / "_meta/records").glob("*.json"))
+                        or any(model_dir.rglob("*.png"))
+                    ):
+                        raise ValueError(
+                            f"Audited loader update requires no previous outputs for {name}. "
+                            "Nothing was deleted; use a NEW bank or audit these outputs first."
+                        )
+            _freeze(receipt, {"original_bank_identity": digest(original), **entry})
             print(
-                "RESUME: audited controller hotfix; existing bank and PNG seals preserved.",
+                "RESUME: audited source hotfix; existing bank and PNG seals preserved.",
                 flush=True,
             )
         return original

@@ -8,6 +8,7 @@ that the pretrained models have passed the GPU/image canary.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 import hashlib
 import importlib
 import importlib.machinery
@@ -35,6 +36,39 @@ def validate_fnns_payload(payload: list[int], prefix: list[int]) -> list[int]:
     if bits[:16] != expected:
         raise ValueError("FNNS payload must retain the configured 16-bit detection prefix.")
     return bits
+
+
+def _freeze_parameters(module: Any) -> None:
+    """Freeze weights without disabling gradients through the input image.
+
+    ScriptModule rejects Module.requires_grad_(), but its parameters support
+    Tensor.requires_grad_(). FNNS must still differentiate its image distortion.
+    """
+    for parameter in module.parameters():
+        parameter.requires_grad_(False)
+
+
+def _load_distseal_inference_state(model: Any, state: Mapping[str, Any]) -> dict[str, int]:
+    """Strictly load VideoWam, excluding only the unused training DC-AE subtree.
+
+    The official detector checkpoint also stores ``autoencoder.model.*``.
+    Upstream setup_model constructs VideoWam without that subtree; this adapter
+    loads the separately pinned diffusers DC-AE. All other unexpected keys,
+    missing inference weights and incompatible tensor shapes remain errors.
+    """
+    if not isinstance(state, Mapping) or not all(isinstance(key, str) for key in state):
+        raise ValueError("DistSeal checkpoint model must be a named state dictionary.")
+    auxiliary_prefix = "autoencoder.model."
+    if any(key.startswith(auxiliary_prefix) for key in model.state_dict()):
+        raise ValueError("DistSeal inference model unexpectedly owns the training autoencoder.")
+    inference = {key: value for key, value in state.items() if not key.startswith(auxiliary_prefix)}
+    model.load_state_dict(inference, strict=True)
+    counts = {
+        "loaded_keys": len(inference),
+        "unused_training_autoencoder_keys": len(state) - len(inference),
+    }
+    print(f"WM_DIAG DistSeal strict inference checkpoint: {counts}", flush=True)
+    return counts
 
 
 def _source_namespace(name: str, path: Path) -> None:
@@ -252,7 +286,7 @@ class FNNSAdapter(_TensorAdapter):
         if self.model.seed != 42:
             raise ValueError("Pinned FNNS initialization-seed contract changed.")
         self.model.model.eval()
-        self.model.model.requires_grad_(False)  # image/distortion gradients remain enabled
+        _freeze_parameters(self.model.model)
 
     def embed(self, input_path: str, output_path: str, payload: list[int], metadata_path: str):
         bits = validate_fnns_payload(payload, self.prefix)
@@ -302,9 +336,10 @@ class DistSealPosthocAdapter(_TensorAdapter):
             if config.args.get("attenuation") is None:
                 config.args.attenuation = "none"  # upstream setup_model calls .lower()
             self.model = setup_model(config, checkpoint)
-            # Upstream loader uses strict=False; reject incomplete inference weights.
+            # Keep strict inference validation; the training autoencoder is separate.
             state = _state_dict(checkpoint, self.torch)["model"]
-            self.model.load_state_dict(state, strict=True)
+            self.checkpoint_loading = _load_distseal_inference_state(self.model, state)
+            del state  # release the unused training autoencoder before loading DC-AE
         self.model.to(self.device).eval().requires_grad_(False)
         self.model.img_size = 512
         self.scaling_w = float(options.get("scaling_w", 0.5))
@@ -345,6 +380,7 @@ class DistSealPosthocAdapter(_TensorAdapter):
             preprocessing="official posthoc DC-AE path: RGB[-1,1]->latent->embedder->blender->DC-AE decode->RGB[0,1]",
             reference="original COCO PNG, not autoencoder reconstruction",
             variant="posthoc_dc_ae_f64c128",
+            checkpoint_loading=self.checkpoint_loading,
         )
 
     def _extract_logits(self, image):

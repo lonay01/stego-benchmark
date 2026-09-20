@@ -164,6 +164,54 @@ class SourceCompatibilityTests(unittest.TestCase):
             bank.freeze_bank_identity(self.project, self.output, self.original), self.original
         )
 
+    def require_empty_test_model(self):
+        path = self.project / "compatibility/embedding_bank_hotfixes.json"
+        data = read_json(path)
+        data["transitions"][0]["requires_empty_models"] = ["test"]
+        write_json(path, data)
+
+    def test_loader_update_accepts_failed_logs_but_rejects_old_outputs(self):
+        self.require_empty_test_model()
+        write_json(self.output / "test/_meta/status.json", {"status": "failed"})
+        for relative in (
+            "native/139.png",
+            "_meta/records/139_native.json",
+            "_meta/model_identity.json",
+        ):
+            with self.subTest(relative=relative):
+                sentinel = self.output / "test" / relative
+                sentinel.parent.mkdir(parents=True, exist_ok=True)
+                sentinel.write_bytes(b"existing output")
+                with self.assertRaisesRegex(ValueError, "requires no previous outputs"):
+                    bank.freeze_bank_identity(self.project, self.output, self.updated)
+                self.assertEqual(sentinel.read_bytes(), b"existing output")
+                self.assertFalse((self.output / "_reports/source_compatibility").exists())
+                sentinel.unlink()
+        self.assertEqual(
+            bank.freeze_bank_identity(self.project, self.output, self.updated), self.original
+        )
+
+    def test_loader_receipt_allows_resuming_outputs_created_after_migration(self):
+        self.require_empty_test_model()
+        bank.freeze_bank_identity(self.project, self.output, self.updated)
+        sentinel = self.output / "test/native/139.png"
+        sentinel.parent.mkdir(parents=True)
+        sentinel.write_bytes(b"new output after audited migration")
+        self.assertEqual(
+            bank.freeze_bank_identity(self.project, self.output, self.updated), self.original
+        )
+        self.assertEqual(sentinel.read_bytes(), b"new output after audited migration")
+
+    def test_loader_receipt_from_another_bank_does_not_bypass_validation(self):
+        self.require_empty_test_model()
+        bank.freeze_bank_identity(self.project, self.output, self.updated)
+        receipt_path = self.output / "_reports/source_compatibility/new-test-only-code.json"
+        receipt = read_json(receipt_path)
+        receipt["original_bank_identity"] = "different-bank"
+        write_json(receipt_path, receipt)
+        with self.assertRaisesRegex(ValueError, "Frozen configuration differs"):
+            bank.freeze_bank_identity(self.project, self.output, self.updated)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -6,6 +6,22 @@
       "original_source_zip_sha256": "9736c8bfb5a32d59c9f622fd61eff2537bb02a623107c96870a3d78277897aac",
       "changed_runtime_files": ["src/wmbench/embedding_bank.py"],
       "reason": "Controller-only fix: treat unsupported payloads as blocked before task signatures; show failed-worker log tails; retain the original bank seal when resuming this audited transition. No adapter, registry, payload, image processing, matching, seed or checkpoint changes."
+    },
+    {
+      "from_source_sha256": "546bb83e4f7c1b7e18eb63539e77d7eb8d7fa73ea16794e98fc287d062583105",
+      "to_source_sha256": "f151f261b1e1a2c9e45e504121fd939d6839f4391e011860301262fcfbcb95ce",
+      "original_source_zip_sha256": "9736c8bfb5a32d59c9f622fd61eff2537bb02a623107c96870a3d78277897aac",
+      "changed_runtime_files": ["src/wmbench/embedding_bank.py", "src/wmbench/adapters/bank_additions.py"],
+      "requires_empty_models": ["fnns_omniseal", "distseal_posthoc_dcae"],
+      "reason": "Includes the audited queue-controller fix, plus initialization-only fixes for FNNS (freeze TorchScript parameters individually) and DistSeal (strict VideoWam state loading excluding only the unused training autoencoder.model.* subtree). These two models must have no previous model identity, PNGs or image records at first migration. Other adapter classes, registry, payloads, scalar matching, seeds and selected checkpoints are unchanged; preserve the original bank seal and record this transition separately."
+    },
+    {
+      "from_source_sha256": "973fe0d19dc8115166bc69fdd28833ff0346099aa81ffa4e27a22ecc16b220fb",
+      "to_source_sha256": "f151f261b1e1a2c9e45e504121fd939d6839f4391e011860301262fcfbcb95ce",
+      "original_source_zip_sha256": "dc11dfb451be2af230fe3d18dc85f71d47f41a12ddedb993d3c334ae8e7277d4",
+      "changed_runtime_files": ["src/wmbench/embedding_bank.py", "src/wmbench/adapters/bank_additions.py"],
+      "requires_empty_models": ["fnns_omniseal", "distseal_posthoc_dcae"],
+      "reason": "Initialization-only fixes for FNNS (freeze TorchScript parameters individually) and DistSeal (strict VideoWam state loading excluding only the unused training autoencoder.model.* subtree). These two models must have no previous model identity, PNGs or image records at first migration. Other adapter classes, registry, payloads, scalar matching, seeds and selected checkpoints are unchanged; preserve the original bank seal and record this transition separately."
     }
   ]
 }

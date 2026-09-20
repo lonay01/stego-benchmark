@@ -245,11 +245,15 @@ increase to 100 without changing the scientific settings.
   payload mappings or numerical settings.
 - Resume is pinned to this source release. Changing source code or the scientific
   policy requires a new bank or an explicitly audited migration. The controller
-  hotfix for the Camera-Shooting Instance queue crash accepts exactly the known
-  previous source fingerprint listed in `compatibility/embedding_bank_hotfixes.json`,
+  hotfixes accept exactly the known
+  previous source fingerprints listed in `compatibility/embedding_bank_hotfixes.json`,
   and only when the dataset, complete registry and policy still match. It keeps
   `bank.json`, image records and PNGs unchanged and writes a separate audit receipt
   under `_reports/source_compatibility/`. It is not a general hash-check bypass.
+  The FNNS/DistSeal loader fix additionally requires no existing model identity,
+  image records or PNGs for these two methods before the first migration. Failed
+  initialization logs are allowed. The receipt permits subsequent resumes of
+  outputs created after the fix. Results from other methods are retained.
   Changing only
   the image count, storage paths or runtime does not change saved PNG identities.
   Checkpoint hashes are frozen per method; new runtime/library details remain

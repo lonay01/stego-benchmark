@@ -1,6 +1,8 @@
 # Physical channel protocol
 
-This protocol tests watermark recovery after **screen–camera transmission**. It follows the [digital](digital-channel-protocol.md) and [neural](neural-channel-protocol.md) protocols: the same COCO carriers and messages, Native and Matched Quality modes, and message-recovery metrics. The marked images are displayed on a monitor and captured with an iPhone 15. Printing is not part of this experiment.
+This protocol tests watermark recovery after **screen–camera transmission**. It follows the [digital](digital-channel-protocol.md) and [neural](neural-channel-protocol.md) protocols: the same COCO carriers, five full-payload message replicates per image and method, Native and Matched Quality modes, and message-recovery metrics. The marked images are displayed on a monitor and captured with an iPhone 15. Printing is not part of this experiment.
+
+**Payload policy: full native payload, revision 21 September 2026.** The three channel protocols use one shared embedding bank. The earlier common-30-bit evaluation is not the policy for this run.
 
 The acquisition uses a **2 × 2 grid of four marked images**, with **one captured photograph per board and physical condition**. There are no three-shot repeats and no best-frame selection. Extraction is assisted by external geometric markers; this is not a test of unaided image localisation.
 
@@ -8,20 +10,24 @@ The acquisition uses a **2 × 2 grid of four marked images**, with **one capture
 
 Use the same fixed set of N COCO images, prepared as 512 × 512 RGB PNG files. Source IDs, preprocessing, and file hashes must agree with the corresponding digital and neural runs. N = 5 is the small validation run; N = 100 is the planned main run. Increasing N must not change the settings or task assignments of existing images.
 
-Each image is tested with five fixed 30-bit messages, shared across methods, modes, and channels. This gives N × 5 image–message pairs per method in Native mode and N × 5 pairs **at each Matched Quality target**.
+For method i, use its **full supported message length L_i**, following the capacity definition, message generation, and interface rules in [Section 1 of the digital protocol](digital-channel-protocol.md#1-images-and-messages). This is the capacity of the selected checkpoint and configuration at the fixed carrier resolution, not a theoretical maximum of the architecture or a guarantee of error-free recovery. For configurable lengths, document the finite supported candidate set and validate the selected length on a separate setup set before freezing the run. Do not shorten messages for a difficult screen, angle, image, or PSNR target.
 
-For longer payloads, score the **last 30 bits** and retain the same fixed filling rule for all other positions. This aligns the evaluated segment, not the total embedded capacity. Reserved bits, keys, and ECC settings remain unchanged between channels. A method that requires CRC/BCH uses its useful-message interface, with coded length and post-ECC results reported separately from raw-bit results; parity or reserved bits are not overwritten.
+Generate five reproducible full-length random messages per image. For each (COCO ID, replicate index 1–5), take the first L_i bits of the same frozen seeded master bitstream used in the digital experiment. Equal-length interfaces receive identical messages; unequal-length interfaces share a prefix, but **all L_i bits are embedded and scored**. Reuse each method's exact message across modes and channels. This gives N × 5 image–message pairs per method in Native mode and N × 5 pairs **at each Matched Quality target**. Cross-method pairing uses image ID and message-replicate index; full messages need not have the same length.
+
+Do not repeat a short message to fill a larger payload, add benchmark-level ECC, or score only the first or last 30 bits. Mandatory native ECC remains part of the selected implementation. Record L_i, raw/coded output length, reserved positions, bit order, and ECC configuration separately. Reserved detection bits and parity bits are not independent message capacity and must not be overwritten. For a raw-bit interface, score all exposed variable message bits; for a mandatory-ECC interface, score the complete useful message after native decoding and report raw coded-bit errors separately where available. Label these interfaces in every comparison. Keys and reserved-bit settings remain identical between modes and channels.
 
 The planned set contains the same 32 existing-image entries as the neural protocol:
 
 | Catalogue group | Entries | Methods |
 |---|---:|---|
-| Common image-message track | 22 | TrustMark-Q, WAM, VideoSeal, PixelSeal, ChunkySeal, VINE-B, VINE-R, RoSteALS, InvisMark, RivaGAN benchmark, DWT-DCT-SVD, MBRS, CIN, HiDDeN benchmark, ARWGAN, SSL Watermarking (multibit), MaskWM, Robust-Wide, SepMark (robust tracing), StegaStamp ONNX benchmark, PIMoG, SSRH |
+| Existing-image track | 22 | TrustMark-Q, WAM, VideoSeal, PixelSeal, ChunkySeal, VINE-B, VINE-R, RoSteALS, InvisMark, RivaGAN benchmark, DWT-DCT-SVD, MBRS, CIN, HiDDeN benchmark, ARWGAN, SSL Watermarking (multibit), MaskWM, Robust-Wide, SepMark (robust tracing), StegaStamp ONNX benchmark, PIMoG, SSRH |
 | Additional integration requirements | 5 | EditGuard (copyright component), OmniGuard (copyright component), SepWater, Fang Screen-Shooting Resilient Watermarking, Camera-Shooting Instance |
 | New additions awaiting integration | 5 | TrustMark-B, TrustMark-P, FIN, FNNS (OmniSealBench implementation), DistSeal (post-hoc DC-AE) |
 | **Total** | **32** | Entries include checkpoint variants; they are not 32 independent architectures. |
 
 The nine generation-time methods are excluded. Inclusion here does not establish that an adapter or checkpoint has passed validation. The [catalogue](model-catalogue.md) restrictions, including FIN's resolution adaptation and the unverified interfaces, remain in force. Missing weights, dependencies, or an incompatible payload interface are explicit blockers, not permission to substitute another method.
+
+Use the shared preflight records for full-message decoding at the author's resolution, after PNG saving, and after adaptation to 512 × 512 where applicable. Validate the payload interface before the full run; do not hide clean recovery errors by selecting favourable images or reducing message length.
 
 ## 2. Embedding modes
 
@@ -45,16 +51,16 @@ Q rounds to the 8-bit grid. One scalar alpha controls the entire residual. The s
 
 Save alpha, achieved PSNR, matching status, and failure reason for every pair and target. A candidate outside tolerance is not labelled matched. Search failure does not prove mathematical unattainability. If matching succeeds but the watermark does not decode, that remains a valid robustness result.
 
-Matched Quality aligns pixel distortion, not perceptual quality; also report SSIM and LPIPS. The reference remains the original COCO image, including for methods that reconstruct it through an autoencoder. Encoder and decoder settings do not change in response to physical-channel results. **Do not adjust PSNR after photography or rectification.**
+Matched Quality aligns pixel distortion **while retaining each method's full selected payload**; it does not equalise payload length or perceptual quality. Also report SSIM and LPIPS. The reference remains the original COCO image, including for methods that reconstruct it through an autoencoder. Encoder and decoder settings do not change in response to physical-channel results. **Do not adjust PSNR after photography or rectification.**
 
-Embedding is performed once per method and image–message pair. Native and all matched candidates come from that same encoder output. Reuse previously saved PNGs only when source hashes, messages, keys, checkpoint, embedding settings, and the scalar-matching specification agree. Do not re-embed specifically for a different angle or screen.
+Embedding is performed once per method and image–message pair. Native and all matched candidates come from that same encoder output. Reuse previously saved PNGs only when source hashes, complete messages, payload-interface metadata, keys, checkpoint, embedding settings, and the scalar-matching specification agree. Do not re-embed specifically for a different angle or screen.
 
 ## 3. Pipeline and four-image acquisition
 
 ```mermaid
 flowchart TD
     X["Original COCO image x"]
-    M["Fixed message m<br/>One of five"]
+    M["Full message m_i: L_i bits<br/>One of five replicates"]
     X --> E["Method encoder<br/>Fixed settings → y"]
     M --> E
     E --> N["Native"]
@@ -62,13 +68,13 @@ flowchart TD
     X -. "PSNR reference" .-> Q
     N --> S["Saved marked PNGs<br/>Shared across channels"]
     Q --> S
-    S --> G["Display a 2 × 2 board<br/>Four methods; same image, message, and mode"]
+    S --> G["Display a 2 × 2 board<br/>Four methods; same image, replicate index, and mode"]
     C["Physical condition<br/>Fixed angle and distance"] --> P["One iPhone capture"]
     G --> P
     P --> O["Archive original photograph<br/>Board ID and acquisition metadata"]
     O --> R["Find external markers<br/>Rectify four regions to 512 × 512"]
     R --> D["Corresponding method decoder"]
-    D --> B["Recovered bits vs. reference message"]
+    D --> B["Score all L_i message bits<br/>Record capacity and recovery"]
     M -. "Scoring only" .-> B
     S --> K["Pre-capture embedding quality<br/>PSNR / SSIM / LPIPS"]
     X -. "Reference" .-> K
@@ -81,7 +87,7 @@ flowchart TD
 - The primary display is one monitor operating at **2560 × 1440 physical pixels**, subject to hardware verification. Record its exact model, panel dimensions, refresh rate, display profile, brightness setting, and connection. The label “2K” alone does not identify these properties.
 - Display each image at **512 × 512 panel pixels** in a centred 2 × 2 layout. Verify actual output scaling with a pixel-grid test; a 512-pixel UI rectangle is not sufficient evidence of 1:1 presentation. Disable fit-to-window scaling and transitions. Freeze colour-management settings and record them.
 - Put fiducial markers, borders, and a board identifier **outside** the four image regions. Fix their geometry, colours, and background before the run. Markers identify geometry and jobs; they do not encode the hidden message or recovered bits. Archive the complete board layout and displayed raster.
-- Each board contains four different methods using the **same COCO image, message, and mode/PSNR target**. This keeps scene content comparable within a photograph. The 32 entries form eight boards for each image–message–mode combination when all entries are available.
+- Each board contains four different methods using the **same COCO image, message-replicate index, and mode/PSNR target**. Full message lengths can differ between tiles. This keeps scene content comparable within a photograph without pretending that payloads are equal. The 32 entries form eight boards for each image–replicate–mode combination when all entries are available.
 - Precompute method grouping, slot assignment, and board order. Balance each method across the four positions over the image/message set; preserve the assignment across physical conditions and embedding modes. Do not require four extra photographs to rotate every individual task through all positions.
 - If a reserved slot is blocked or unmatched, retain its assignment and show the corresponding unmarked source as a labelled placeholder in the manifest. It is not a completed watermark trial. Do not move other methods into a more favourable slot after seeing results. A board with no eligible trials can be skipped with all affected statuses recorded.
 
@@ -150,16 +156,16 @@ These are planned full-matrix counts assuming all entries and PSNR targets are a
 
 | Quantity | Measurement |
 |---|---|
-| Message errors | BER over the common 30-bit segment for valid extracted bit strings |
+| Payload | Full variable message length L_i in bits; L_i / (512 × 512) in bits per pixel; raw/coded length, reserved positions, and ECC reported separately |
+| Message errors | Full-message BER: number of incorrect information bits divided by L_i, at the declared raw or post-ECC message interface |
 | Bit accuracy | 1 − BER |
-| Exact recovery | Fraction of evaluated messages with all 30 bits recovered correctly; distinguish conditional decoder recovery from the end-to-end result below |
-| Full payload | Payload length and full-message errors, separately from the common segment; distinguish raw and post-ECC outputs |
+| Exact recovery | Fraction of full L_i-bit messages recovered without error; secondary and length-dependent, not a direct ranking across unequal lengths; distinguish conditional decoder recovery from the end-to-end result below |
 | Embedding quality | PSNR, SSIM, and LPIPS between the original COCO image and marked PNG **before display** |
 | Quality matching | Achieved PSNR, alpha, fraction within tolerance, and failure reason |
 | Acquisition and rectification | Capture completion, correct board association, localisation/rectification success, and tile dimensions in the original photograph |
 | Computational cost | Embedding, acquisition, rectification, and extraction time separately, with hardware and software settings |
 
-Use reference bits only after extraction for scoring. Report BER on decodable cases together with its coverage; do not invent a BER for a missing crop or missing bit string. For valid, correctly associated photographs, also report **end-to-end exact recovery** over eligible tiles: a tile that cannot be rectified or for which the decoder returns no message is an unsuccessful recovery. Infrastructure failures, blocked methods, and failed matching are listed separately from captured-but-unsuccessful trials.
+Use reference bits only after extraction for scoring. Score complete decoded bit strings even when many bits are wrong. Report BER together with its coverage; do not invent a BER for a missing crop, missing string, length mismatch, or process crash. A native ECC rejection is a failed full-message recovery; post-ECC BER is unavailable if no message is returned. For valid, correctly associated photographs, also report **end-to-end exact recovery** over eligible tiles: a tile that cannot be rectified or for which the decoder returns no message is an unsuccessful recovery. Infrastructure failures, blocked methods, and failed matching are listed separately from captured-but-unsuccessful trials. Keep Clean failures in the records and include their valid bit strings in Clean and attack statistics; do not condition the physical results on successful Clean recovery.
 
 As channel diagnostics, compute PSNR, SSIM, and LPIPS between each saved marked PNG and its rectified photograph using a fixed colour-conversion implementation. These include display/camera colour response and alignment error; they are not interchangeable with embedding quality and are not used to re-match PSNR or reject photographs. Record unmarked placeholder tiles as controls only if their separate control role is specified; their presence does not establish a calibrated false-positive rate.
 
@@ -168,11 +174,14 @@ As channel diagnostics, compute PSNR, SSIM, and LPIPS between each saved marked 
 - Average the five messages within each image, then average across images. There are **no repeated captures to average** in the main matrix.
 - Report all seven physical conditions separately, along with digital Clean. The frontal physical baseline is not labelled distortion-free.
 - As a secondary stress summary, average the two levels within each of three families—horizontal angle, vertical angle, and distance—and give the three families equal weight. Report the physical baseline separately. This score is not numerically interchangeable with the digital or neural macro-average.
-- Keep Native and each Matched Quality target in separate tables. Pairwise matched comparisons use the common eligible image–message pairs and state the sample size. Show both matching and acquisition/rectification coverage; do not hide missing cases behind averages over survivors.
+- Keep Native and each Matched Quality target in separate tables. Show L_i, bits per pixel, raw/ECC interface, actual embedding quality, Clean BER, physical BER, exact recovery, and costs together. Do not pool raw and post-ECC BER into an unqualified ranking or pool bits across methods into one capacity-weighted average.
+- Pairwise matched comparisons use common eligible image IDs and message-replicate indices and state the sample size; full messages may differ in length. Show both matching and acquisition/rectification coverage; do not hide missing cases behind averages over survivors.
 - For 95% confidence intervals, use 2,000 paired image-level bootstrap resamples with a fixed seed. Each resampled image carries all its messages, modes, conditions, boards, and tiles across methods. Because a board contains only one COCO image, this preserves the shared-frame dependence rather than treating its four tiles as independent photographs.
 - Preserve frame IDs, tile positions, device/display IDs, timestamps, and session blocks. These intervals describe image-sampling uncertainty conditional on the apparatus and sessions, not independent replication across phones, displays, or repeated captures. A single capture per task cannot estimate its shot-to-shot variance.
 - Schedule methods and modes in balanced, interleaved order within each fixed physical condition. Record interruptions and session changes. Do not put one method consistently in a favourable slot or a different lighting session.
 - Compare channels using the same pre-attack PNG and source records. Interpret the result as performance on the specified marker-assisted screen–camera setup, not all possible physical transmission.
+
+This is a **capacity–quality–robustness comparison, not an equal-payload experiment**. BER normalises bit errors, not embedding load; exact recovery depends on message length. Interpret the joint trade-off and within-method channel changes rather than declaring a universal winner from BER alone. An equal-payload claim requires separately specified compatible configurations with equal actual information length, not a shorter scoring window. Do not present L_i × (1 − BER) as guaranteed usable throughput or channel capacity.
 
 ## 7. Scope, reuse, and run records
 
@@ -184,4 +193,4 @@ Keep the source and marked PNGs, full board manifest, messages and required key 
 
 Resume by validated job specification and input/output hashes, not filenames alone. Do not recapture or re-embed completed valid tasks. Partial transfers remain incomplete, and retries retain their provenance. Decoding can resume independently from the saved photographs. A technically complete queue is not proof that every planned method or matching target was available.
 
-This document is the specification for the next physical run, not a claim that acquisition software or all 32 model adapters have already been implemented and verified. Older single-image pilots and earlier pixel-wise PSNR-matching runs keep their original descriptions unless their records establish compatibility.
+This document is the specification for the next physical run, not a claim that acquisition software or all 32 model adapters have already been implemented and verified. Older common-30-bit runs, single-image pilots, and pixel-wise PSNR-matching runs keep their original descriptions and files. Full-message metrics may be recomputed only from verified complete expected/decoded bit strings; re-scoring does not turn fixed filler into new random messages. Changed payloads, adapters, or assignments require a new versioned bank, not overwriting or mixing old results. This documentation revision does not modify the released notebook. Existing photographs can be reused only when their source-bank records establish compatibility.

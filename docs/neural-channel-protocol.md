@@ -1,6 +1,8 @@
 # Neural channel protocol
 
-This protocol tests watermark recovery after neural image reconstruction, regeneration, and editing. It follows the [digital channel protocol](digital-channel-protocol.md): the same COCO images, five common 30-bit messages, Native and Matched Quality modes, and message-recovery metrics. The main change is the attack matrix. Neural-channel output quality is recorded separately from embedding quality.
+This protocol tests watermark recovery after neural image reconstruction, regeneration, and editing. It follows the [digital channel protocol](digital-channel-protocol.md): the same COCO images, five full-payload message replicates per image and method, Native and Matched Quality modes, and message-recovery metrics. The main change is the attack matrix. Neural-channel output quality is recorded separately from embedding quality.
+
+**Payload policy: full native payload, revision 21 September 2026.** The three channel protocols use one shared embedding bank. The earlier common-30-bit evaluation is not the policy for this run.
 
 The scope is the 32 existing-image entries in the [model catalogue](model-catalogue.md). The nine generation-time methods are excluded and will have a separate protocol. This is an evaluation of pretrained methods, not a training protocol; method-specific optimisation during embedding remains part of the encoder.
 
@@ -8,25 +10,27 @@ The scope is the 32 existing-image entries in the [model catalogue](model-catalo
 
 All methods use the same fixed set of N COCO images, prepared as 512 × 512 RGB PNG files. The image IDs, preprocessing settings, and file hashes are stored in the dataset manifest. The digital and neural experiments use the same source PNGs, not separately prepared copies of the same COCO IDs.
 
-Each image is tested with five fixed 30-bit messages. The same messages are used across methods, modes, and channels. This gives:
+For method i, use its **full supported message length L_i**, following the capacity definition, message generation, and interface rules in [Section 1 of the digital protocol](digital-channel-protocol.md#1-images-and-messages). This is the capacity of the selected checkpoint and configuration at the fixed carrier resolution, not a theoretical maximum of the architecture or a guarantee of error-free recovery. For configurable lengths, document the finite supported candidate set and validate the selected length on a separate setup set before freezing the run. Do not choose a length per image or channel, or shorten messages after seeing attack results.
+
+Generate five reproducible full-length random messages per image. For each (COCO ID, replicate index 1–5), take the first L_i bits of the same frozen seeded master bitstream used in the digital experiment. Equal-length interfaces receive identical messages; unequal-length interfaces share a prefix, but **all L_i bits are embedded and scored**. Reuse each method's exact message in every mode and channel. This gives:
 
 - N × 5 image–message pairs per method in Native mode;
 - N × 5 pairs per method **at each PSNR target** in Matched Quality mode.
 
-For methods with a payload longer than 30 bits, the common evaluation uses the **last 30 bits**. The remaining positions follow the same fixed, recorded filling rule as in the digital experiment. Full payload length and full-message errors are reported separately. This aligns the evaluated message segment, not the total embedded payload; it is not an equal-capacity comparison.
+Cross-method pairing uses **image ID and message-replicate index**, not an assumption that different-length messages are identical. This is not an equal-capacity comparison. Do not repeat a short message to fill a larger payload, add benchmark-level ECC, or score only the first or last 30 bits.
 
-Reserved bits, keys, and error-correction settings must remain identical between channels. Where a method requires CRC/BCH, the common message is defined at the useful-payload interface; its coded length and post-ECC result are labelled separately from raw-bit results. Reserved or parity bits must not be overwritten to force the last-30-bit convention.
+Mandatory native ECC remains part of the selected implementation. Record L_i, the raw/coded output length, reserved positions, bit order, and ECC configuration separately. Reserved detection bits and parity bits are not independent message capacity and must not be overwritten. For a raw-bit interface, score all exposed variable message bits; for a mandatory-ECC interface, score the complete useful message after native decoding and report raw coded-bit errors separately where available. Label these interfaces in every comparison. Keys and reserved-bit settings remain identical between modes and channels.
 
 The planned set contains the following 32 entries:
 
 | Catalogue group | Entries | Methods |
 |---|---:|---|
-| Common image-message track | 22 | TrustMark-Q, WAM, VideoSeal, PixelSeal, ChunkySeal, VINE-B, VINE-R, RoSteALS, InvisMark, RivaGAN benchmark, DWT-DCT-SVD, MBRS, CIN, HiDDeN benchmark, ARWGAN, SSL Watermarking (multibit), MaskWM, Robust-Wide, SepMark (robust tracing), StegaStamp ONNX benchmark, PIMoG, SSRH |
+| Existing-image track | 22 | TrustMark-Q, WAM, VideoSeal, PixelSeal, ChunkySeal, VINE-B, VINE-R, RoSteALS, InvisMark, RivaGAN benchmark, DWT-DCT-SVD, MBRS, CIN, HiDDeN benchmark, ARWGAN, SSL Watermarking (multibit), MaskWM, Robust-Wide, SepMark (robust tracing), StegaStamp ONNX benchmark, PIMoG, SSRH |
 | Additional integration requirements | 5 | EditGuard (copyright component), OmniGuard (copyright component), SepWater, Fang Screen-Shooting Resilient Watermarking, Camera-Shooting Instance |
 | New additions awaiting integration | 5 | TrustMark-B, TrustMark-P, FIN, FNNS (OmniSealBench implementation), DistSeal (post-hoc DC-AE) |
 | **Total** | **32** | Checkpoint variants are separate entries, not necessarily independent architectures. |
 
-The run manifest identifies the implementation, checkpoint, numerical precision, native resolution, preprocessing, and embedding settings for each entry. The catalogue's integration restrictions still apply: listing a method here does not establish that its weights, adapter, or 30-bit interface have passed validation. Missing dependencies or an incompatible interface are reported as blockers, not silently replaced with another method. FIN's resolution adaptation and the checkpoint-dependent interfaces require explicit checks. DistSeal uses post-hoc embedding into an existing image, not its generation-time mode.
+The run manifest identifies the implementation, checkpoint, payload interface, numerical precision, native resolution, preprocessing, and embedding settings for each entry. The catalogue's integration restrictions still apply: listing a method here does not establish that its weights, adapter, or full-payload interface have passed validation. Missing dependencies or an incompatible interface are reported as blockers, not silently replaced with another method. Check full-message decoding at the author's resolution, after PNG saving, and after adaptation to 512 × 512 where applicable, including FIN. Use the same preflight records as the digital run. DistSeal uses post-hoc embedding into an existing image, not its generation-time mode.
 
 ## 2. Embedding modes
 
@@ -54,7 +58,7 @@ The search uses PSNR only, with no decoder feedback. **No pixel-wise correction 
 
 For every pair and target, save alpha, achieved PSNR, and matching status. If the search does not find a value within tolerance, retain the diagnostic record but do not label the image as matched. Search failure is not, by itself, proof that the target is mathematically unattainable.
 
-If PSNR matches but the watermark no longer decodes, this is a valid robustness result, not a matching failure. Matched Quality compares robustness at similar pixel distortion; it does not guarantee equal perceptual quality. SSIM and LPIPS are reported alongside PSNR.
+If PSNR matches but the watermark no longer decodes, this is a valid robustness result, not a matching failure. Matched Quality compares robustness at similar pixel distortion **while retaining each method's full selected payload**; it does not equalise payload length or guarantee equal perceptual quality. SSIM and LPIPS are reported alongside PSNR.
 
 Encoder settings are applied before embedding. Quality matching is applied after embedding and before attacks. **No PSNR adjustment is performed after an attack.** The decoder is unchanged between modes and channels. For methods that reconstruct the carrier through an autoencoder, including DistSeal, all quality measurements use the original COCO image as the reference; reconstruction distortion is not subtracted from the embedding budget.
 
@@ -63,7 +67,7 @@ Encoder settings are applied before embedding. Quality matching is applied after
 ```mermaid
 flowchart TD
     X["Original image x<br/>Same COCO PNG as digital"]
-    M["Message m<br/>One of five"]
+    M["Full message m_i: L_i bits<br/>One of five replicates"]
     E["Method encoder<br/>Fixed settings → y"]
     X --> E
     M --> E
@@ -76,7 +80,7 @@ flowchart TD
     C["Fixed COCO caption / edit instruction<br/>Attack settings, mask, and seeds"] --> A
     A --> O["Save attacked RGB PNG"]
     O --> D["Method decoder"]
-    D --> B["Recovered bits vs. original message"]
+    D --> B["Score all L_i message bits<br/>Record capacity and recovery"]
     M -. "Reference bits" .-> B
     S --> K["Embedding quality before attacks<br/>PSNR / SSIM / LPIPS"]
     X -. "Reference image" .-> K
@@ -84,7 +88,7 @@ flowchart TD
     K --> R
 ```
 
-Embedding is performed once per method and image–message pair. Native and the three Matched Quality images are derived from that same encoder output. Attacks consume the saved PNGs; they do not rerun embedding or matching. Existing digital artifacts can be reused only if their source images, payloads, checkpoint, embedding settings, scalar-matching specification, and artifact hashes agree with this protocol.
+Embedding is performed once per method and image–message pair. Native and the three Matched Quality images are derived from that same encoder output. Attacks consume the saved PNGs; they do not rerun embedding or matching. Existing digital artifacts can be reused only if their source images, complete messages, payload-interface metadata, key state, checkpoint, embedding settings, scalar-matching specification, and artifact hashes agree with this protocol. The shared bank contains up to 640 × N marked PNGs for all 32 entries and four configurations; changing the channel does not require a new bank.
 
 Each attack starts from the selected pre-attack marked image, not from the output of another attack. The two-pass VAE condition is the only specified chain. The same attack settings, instructions, masks, and repeat seeds are used across watermark methods and embedding modes. Identical seeds couple the repetitions; they do not make different input images produce identical edited content.
 
@@ -129,19 +133,19 @@ The primary metrics are the same as in the digital channel.
 
 | Quantity | Measurement |
 |---|---|
-| Message errors | BER over the common 30-bit segment |
+| Payload | Full variable message length L_i in bits; L_i / (512 × 512) in bits per pixel; raw/coded length, reserved positions, and ECC reported separately |
+| Message errors | Full-message BER: number of incorrect information bits divided by L_i, at the declared raw or post-ECC message interface |
 | Bit accuracy | 1 − BER |
-| Exact recovery | Fraction of messages with all 30 bits recovered correctly |
-| Full payload | Payload length and full-message errors, separate from the common-segment results; distinguish raw and post-ECC measurements |
+| Exact recovery | Fraction of full L_i-bit messages recovered without error; secondary, length-dependent metric, not a direct ranking across unequal payload lengths |
 | Embedding quality | PSNR, SSIM, and LPIPS between the original and marked image **before attacks** |
 | Computational cost | Embedding and extraction time, with hardware and execution settings; neural attack time is recorded separately |
 | Quality matching | Fraction within tolerance, achieved PSNR, alpha, and failure reason |
 
-The decoder returns recovered bits before comparison with the expected message. Reference bits are used for scoring, not to select the decoder output.
+The decoder returns recovered bits before comparison with the expected message. Reference bits are used for scoring, not to select the decoder output. Score complete decoded strings even when many bits are wrong. Missing strings and length mismatches have no defined BER. A native ECC rejection is a failed full-message recovery; post-ECC BER is unavailable if no message is returned. Report explicit rejections and their coverage separately from infrastructure failures. Keep Clean failures in the records and include their valid bit strings in Clean and attack statistics; do not condition the main attack results on successful Clean recovery.
 
 Neural-channel diagnostics are separate from embedding quality: save attack input/output pairs and measure their PSNR, SSIM, and LPIPS. For inpainting, also report mean absolute pixel change inside and outside the mask. These describe the extent of editing; a large difference after an intentional style change is not automatically an invalid attack. They do not establish semantic preservation or instruction compliance. Inspect content changes and editing failures without choosing examples based on watermark recovery, and do not silently remove failed edits from the robustness tables.
 
-Watermark detection and message recovery are different tasks. This protocol does not require the generation-time track's negative-generation or threshold-calibration campaign. A claim of TPR at a given FPR would require a separately specified calibration and unwatermarked test set. Neither theoretical guessing probabilities nor common-message BER establish empirical FPR.
+Watermark detection and message recovery are different tasks. This protocol does not require the generation-time track's negative-generation or threshold-calibration campaign. A claim of TPR at a given FPR would require a separately specified calibration and unwatermarked test set. Neither theoretical guessing probabilities nor full-message BER establish empirical FPR.
 
 ## 6. Aggregation and comparison
 
@@ -149,12 +153,14 @@ Watermark detection and message recovery are different tasks. This protocol does
 - Report each attack condition and severity separately.
 - For an overall robustness score, use **four families**: VAE reconstruction, diffusion regeneration, instruction editing, and inpainting. Average levels/tasks within each family and give the four families equal weight. Lighting and style are two tasks within instruction editing. Report Clean separately, outside this score.
 - Use image-level bootstrap sampling with 2,000 resamples to obtain 95% confidence intervals. Messages and attack repeats are not treated as independent images. Fix and record the bootstrap seed.
-- Keep Native and the three Matched Quality targets in separate tables. Distinguish raw-message and post-ECC results rather than pooling them into one unqualified ranking.
-- Report matching coverage for every method and target. Pairwise Matched Quality comparisons use common image–message pairs that meet the target for both methods, with the comparison sample size stated. Do not compare different surviving subsets as if they were paired.
+- Keep Native and the three Matched Quality targets in separate tables. Show L_i, bits per pixel, actual embedding quality, Clean BER, attacked BER, exact recovery, cost, and coverage together. Distinguish raw-message and post-ECC results rather than pooling them into one unqualified ranking. Do not pool bits across methods into one capacity-weighted average.
+- Report matching coverage for every method and target. Pairwise Matched Quality comparisons use common image IDs and message-replicate indices that meet the target for both methods, with the comparison sample size stated. Full messages may have different lengths. Do not compare different surviving subsets as if they were paired.
 - Record failed or blocked generation, missing outputs, and extraction errors separately from valid decoding errors. A valid extracted message with wrong bits is a robustness result; a process crash is not BER = 0 or BER = 1. Report task coverage alongside every aggregate and do not hide missing levels in a complete-looking score.
 - Digital-versus-neural comparisons use corresponding method, checkpoint, image, message, and pre-attack PNG. Compare family profiles; a digital macro-average over eight families and a neural macro-average over four are not the same measurement scale.
 
-Native answers: how robust is the method to the specified neural transformations at its selected embedding settings? Matched Quality answers the same question at the specified pre-attack PSNR. Neither mode establishes robustness to every neural editor or a causal explanation of architectural differences.
+Native answers: how much payload does this selected configuration carry, with what image distortion and recovery under neural transformations? Matched Quality asks the same question at the specified pre-attack PSNR, retaining that payload. Neither mode establishes robustness to every neural editor or a causal explanation of architectural differences.
+
+This is a **capacity–quality–robustness comparison, not an equal-payload experiment**. BER normalises bit errors, not embedding load; exact recovery depends on message length. Interpret the joint trade-off and within-method changes across channels, not a bare BER leaderboard as proof of a universal winner. Equal-payload claims require a separate compatible-configuration comparison with equal actual information length, not a shorter scoring window. Do not present L_i × (1 − BER) as guaranteed usable throughput or channel capacity.
 
 ## 7. Scope, reuse, and run records
 
@@ -162,8 +168,8 @@ This is the specification for the next neural-channel run, not a claim that all 
 
 Store source and marked PNGs, payloads and required key state, alpha records, captions, masks, attack configurations, output hashes, per-task metrics, logs, dependency versions, and checkpoint hashes in persistent storage. Private key material need not be published, but the run must retain what is required to reproduce extraction. A completed task is reusable only after its specification and input/output hashes are validated. File existence alone is not a completion check. Partially written tasks remain incomplete; resuming the same run must not recompute valid embedding or attack artifacts unnecessarily.
 
-The execution manifest must freeze the remaining shared details before the full run: model-specific adapters and settings, message filling, scalar-search bounds and stopping rules, seed mapping, preprocessing, metric implementations, dependency locks, and device/precision settings. These choices cannot be tuned separately for a favourable neural-channel result.
+The execution manifest must freeze the remaining shared details before the full run: model-specific adapters and settings, selected full-payload lengths and interfaces, message generation, scalar-search bounds and stopping rules, seed mapping, preprocessing, metric implementations, dependency locks, and device/precision settings. These choices cannot be tuned separately for a favourable neural-channel result.
 
-Older runs with a pixel-wise PSNR fallback, a single assigned message per image, or a different target set keep their original protocol description. They are not relabelled as this experiment. Reuse is permitted only where the actual artifact records establish compatibility.
+Older runs with common-30-bit scoring, a pixel-wise PSNR fallback, a single assigned message per image, or a different target set keep their original protocol description and files. Full-message metrics may be recomputed only from verified complete expected/decoded bit strings; this does not turn fixed filler into new random messages. Reuse requires actual artifact compatibility. Changed payloads, adapters, or assignments require a new versioned bank, not overwriting or mixing old results. This documentation revision does not modify the released notebook.
 
 Generation-time watermarking, training new watermarking models, physical capture, and decoder-aware adversarial optimisation are outside this document.

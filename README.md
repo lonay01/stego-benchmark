@@ -20,8 +20,12 @@ resume keeps previously saved results; see the validation record for limits.
 
 Start with `N_IMAGES = 5`; increase it to `100` after checking the canary run.
 The bank uses **one deterministic 30-bit message per image**, shared across
-methods and modes. This differs from the five-message design in the protocol
-documents; the two configurations must not be reported as the same experiment.
+methods and modes. The revised protocols instead specify **five random messages
+at each method's full supported payload length**, with full-message scoring.
+**The released notebook has not yet been migrated to this payload policy.**
+The two configurations must not be reported as the same experiment. Existing
+results remain historical records; changed message assignments require a new
+versioned embedding bank rather than overwriting previous artifacts.
 
 The catalogue contains 32 methods, not 32 GPU-validated implementations.
 Some methods need manually supplied checkpoints or MATLAB; Camera-Shooting

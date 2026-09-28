@@ -4,6 +4,8 @@ This protocol tests watermark recovery after digital image distortions. It uses 
 
 **Payload policy: full native payload, revision 21 September 2026.** The three channel protocols use one shared embedding bank. The earlier common-30-bit evaluation is not the policy for this run.
 
+**Method update, 29 September 2026:** replace the old HiDDeN benchmark entry with [Meta Revisited HiDDeN](meta-hidden-revisited.md). Its fixed profile uses all 48 bits and a central 256×256 crop of the frozen RGB512 source, without resizing. Measure embedding quality and perform scalar matching against that crop. Reuse the same saved carrier across channels; do not merge old HiDDeN measurements into the Meta row. The scope remains 32 entries.
+
 ## 1. Images and messages
 
 All methods use the same fixed set of N COCO images, prepared as 512 × 512 RGB PNG files. The image IDs, preprocessing settings, and file hashes are stored in the dataset manifest. N = 5 is the validation run; N = 100 is the planned main run. Increasing N must not change assignments for existing images.
@@ -29,7 +31,7 @@ The scope is the same 32 existing-image entries as the [neural](neural-channel-p
 
 | Catalogue group | Entries | Methods |
 |---|---:|---|
-| Existing-image track | 22 | TrustMark-Q, WAM, VideoSeal, PixelSeal, ChunkySeal, VINE-B, VINE-R, RoSteALS, InvisMark, RivaGAN benchmark, DWT-DCT-SVD, MBRS, CIN, HiDDeN benchmark, ARWGAN, SSL Watermarking (multibit), MaskWM, Robust-Wide, SepMark (robust tracing), StegaStamp ONNX benchmark, PIMoG, SSRH |
+| Existing-image track | 22 | TrustMark-Q, WAM, VideoSeal, PixelSeal, ChunkySeal, VINE-B, VINE-R, RoSteALS, InvisMark, RivaGAN benchmark, DWT-DCT-SVD, MBRS, CIN, Meta Revisited HiDDeN, ARWGAN, SSL Watermarking (multibit), MaskWM, Robust-Wide, SepMark (robust tracing), StegaStamp ONNX benchmark, PIMoG, SSRH |
 | Additional integration requirements | 5 | EditGuard (copyright component), OmniGuard (copyright component), SepWater, Fang Screen-Shooting Resilient Watermarking, Camera-Shooting Instance |
 | New additions awaiting integration | 5 | TrustMark-B, TrustMark-P, FIN, FNNS (OmniSealBench implementation), DistSeal (post-hoc DC-AE) |
 | **Total** | **32** | Checkpoint variants are separate entries, not necessarily independent architectures. |

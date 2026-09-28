@@ -7,6 +7,10 @@ The adapter code bridges these upstream APIs; citation and license obligations r
 Primary reference implementations:
 
 - [WIBE](https://github.com/ispras/wibe) — legacy wrapper configurations and some weight mirrors.
+- [Meta Revisited HiDDeN](https://github.com/facebookresearch/stable_signature/tree/c91217c06e953a4eaf270ef9de4a3939bcea3366/hidden)
+  — official post-hoc module released with Stable Signature (ICCV 2023), under
+  upstream CC BY-NC 4.0. This replaces the old third-party HiDDeN entry, not its
+  historical results. Source and checkpoint hashes are pinned in the registry.
 - [VideoSeal](https://github.com/facebookresearch/videoseal), [TrustMark](https://github.com/adobe/trustmark),
   [VINE](https://github.com/Shilin-LU/VINE), [invisible-watermark](https://github.com/ShieldMnt/invisible-watermark).
 - [COCO](https://cocodataset.org/) — source images/captions; image copyright remains with original owners.

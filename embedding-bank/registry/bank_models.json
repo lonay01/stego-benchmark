@@ -704,58 +704,57 @@
     "validated_lock": "locks/legacy_cin.lock"
   },
   {
-    "id": "hidden_benchmark",
-    "family": "HiDDeN benchmark",
+    "id": "meta_hidden_revisited",
+    "family": "Meta Revisited HiDDeN",
     "origin_group": "digital_or_posthoc",
     "track": "posthoc",
     "backend": "python",
-    "native_bits": 30,
-    "adapter": "wmbench.adapters.legacy:WibeAdapter",
-    "python": "3.10",
-    "environment": "legacy_hidden_benchmark",
-    "payload_namespace": "hidden",
-    "source": {
-      "url": "https://github.com/ispras/wibe.git",
-      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
-      "submodules": [
-        "submodules/HiDDeN"
-      ]
+    "native_bits": 48,
+    "native_size": 256,
+    "carrier_policy": "center_crop_no_resampling",
+    "adapter": "wmbench.adapters.meta_hidden:MetaHiddenAdapter",
+    "python": "3.10.12",
+    "environment": "meta_hidden_revisited",
+    "payload_namespace": "meta_hidden_revisited",
+    "upstream": {
+      "url": "https://github.com/facebookresearch/stable_signature",
+      "revision": "c91217c06e953a4eaf270ef9de4a3939bcea3366",
+      "module": "hidden",
+      "paper": "https://arxiv.org/abs/2303.15435",
+      "license": "CC-BY-NC-4.0"
     },
     "requirements": [
       "torch==2.5.1",
       "torchvision==0.20.1",
       "numpy==1.26.4",
-      "Pillow==10.4.0",
-      "scipy==1.14.1",
-      "scikit-image==0.24.0",
-      "PyYAML==6.0.2",
-      "loguru==0.7.2",
-      "pydantic==2.10.6",
-      "requests==2.32.3",
-      "tqdm==4.66.5",
-      "einops==0.8.0",
-      "omegaconf==2.3.0",
-      "pandas==2.2.3",
-      "opencv-python==4.10.0.84",
-      "setuptools==80.9.0",
-      "onnxruntime==1.20.1"
+      "Pillow==10.4.0"
     ],
-    "assets": [],
-    "options": {
-      "wrapper": "wibench.algorithms.hidden.wrapper:HiddenWrapper",
-      "kwargs": {
-        "params": {
-          "run_name": "combined-noise"
-        }
+    "assets": [
+      {
+        "path": "hidden/models.py",
+        "url": "https://raw.githubusercontent.com/facebookresearch/stable_signature/c91217c06e953a4eaf270ef9de4a3939bcea3366/hidden/models.py",
+        "sha256": "b0eceb802f1703f9e7f97446128a6e30a2a5779ac1c3c3904418b3c058a3bcc6"
+      },
+      {
+        "path": "hidden/attenuations.py",
+        "url": "https://raw.githubusercontent.com/facebookresearch/stable_signature/c91217c06e953a4eaf270ef9de4a3939bcea3366/hidden/attenuations.py",
+        "sha256": "893809a7a3f2c846ab355a361d3eca27daa3421c5d020eee7ce9d231cf9bca4c"
+      },
+      {
+        "path": "hidden/ckpts/hidden_replicate.pth",
+        "url": "https://raw.githubusercontent.com/facebookresearch/stable_signature/c91217c06e953a4eaf270ef9de4a3939bcea3366/hidden/ckpts/hidden_replicate.pth",
+        "sha256": "5a83d4d5c85f6d58abef7d1083d559dae1eb9171bf63ca0e0c13016fd4741443"
       }
+    ],
+    "options": {
+      "profile": "checkpoint_256"
     },
     "capability": {
       "status": "ready_unverified",
       "ecc": "none"
     },
-    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization.",
-    "provenance": "third_party_PyTorch_benchmark_checkpoint_not_original_Torch7",
-    "validated_lock": "locks/legacy_hidden_benchmark.lock"
+    "notes": "Official Meta Revisited HiDDeN post-hoc module, not original 2018 HiDDeN or generation-time Stable Signature. Fixed checkpoint_256 profile: 48 raw bits, scaling_i=1, scaling_w=0.3, no JND/channel scaling. New model identity; never reuse hidden_benchmark results. Dependencies are resolved and locked on first preparation.",
+    "provenance": "official_Meta_revisited_posthoc_checkpoint"
   },
   {
     "id": "arwgan",

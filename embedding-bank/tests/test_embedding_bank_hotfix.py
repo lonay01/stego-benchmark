@@ -89,7 +89,9 @@ class BlockedQueueTests(unittest.TestCase):
 
 
 class SourceCompatibilityTests(unittest.TestCase):
-    def test_published_transition_matches_the_exact_current_runtime(self):
+    def test_current_runtime_is_not_approved_as_a_historical_hotfix(self):
+        # These migrations belong to the common30 release, not to a changed
+        # method catalogue. Do not whitelist the Meta replacement as a hotfix.
         fingerprint = digest(
             {
                 p.relative_to(PROJECT).as_posix(): sha256(p)
@@ -99,7 +101,24 @@ class SourceCompatibilityTests(unittest.TestCase):
         transitions = read_json(PROJECT / "compatibility/embedding_bank_hotfixes.json")[
             "transitions"
         ]
-        self.assertIn(fingerprint, [row["to_source_sha256"] for row in transitions])
+        self.assertNotIn(fingerprint, [row["to_source_sha256"] for row in transitions])
+
+    def test_meta_replacement_cannot_migrate_or_relabel_an_old_bank(self):
+        models = bank.bank_registry(PROJECT)
+        old_models = copy.deepcopy(models)
+        old_models.pop("meta_hidden_revisited")
+        old_models["hidden_benchmark"] = {"id": "hidden_benchmark", "native_bits": 30}
+        old = {**self.original, "models": old_models}
+        new = {**old, "models": models, "source_code_sha256": "changed-code"}
+        write_json(self.output / "bank.json", old)
+        prior_bytes = (self.output / "bank.json").read_bytes()
+        sentinel = self.output / "hidden_benchmark/native/saved.png"
+        sentinel.parent.mkdir(parents=True)
+        sentinel.write_bytes(b"untouched old result")
+        with self.assertRaisesRegex(ValueError, "NEW output folder"):
+            bank.freeze_bank_identity(PROJECT, self.output, new)
+        self.assertEqual((self.output / "bank.json").read_bytes(), prior_bytes)
+        self.assertEqual(sentinel.read_bytes(), b"untouched old result")
 
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()

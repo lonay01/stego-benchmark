@@ -36,7 +36,7 @@ MODEL_IDS = (
     "dwt_dct_svd",
     "mbrs",
     "cin",
-    "hidden_benchmark",
+    "meta_hidden_revisited",
     "arwgan",
     "ssl_watermarking",
     "maskwm",
@@ -345,11 +345,33 @@ def _seal(bank: Path, path: Path, record: dict, files: list[Path]) -> dict:
     return record
 
 
-def _check_png(path: Path) -> None:
+def _check_png(path: Path, size: int = 512) -> None:
     with Image.open(path) as image:
-        if image.format != "PNG" or image.mode != "RGB" or image.size != (512, 512):
-            raise ValueError(f"Adapter must produce RGB 512x512 PNG: {path}")
+        if image.format != "PNG" or image.mode != "RGB" or image.size != (size, size):
+            raise ValueError(f"Adapter must produce RGB {size}x{size} PNG: {path}")
         image.load()
+
+
+def model_carrier(bank: Path, model: dict, source: Path) -> Path:
+    """Freeze a declared native crop; never resize or overwrite the RGB512 original."""
+    size = model.get("native_size", 512)
+    if type(size) is not int or not 1 <= size <= 512:
+        raise ValueError("Invalid registered carrier size")
+    if size == 512:
+        return source
+    if model.get("carrier_policy") != "center_crop_no_resampling":
+        raise ValueError("A smaller carrier requires an explicit cropping policy")
+    _check_png(source)
+    offset = (512 - size) // 2
+    pixels = load_rgb(source)[offset : offset + size, offset : offset + size]
+    target = bank / model["id"] / "_meta/carriers" / source.name
+    if target.exists():
+        _check_png(target, size)
+        if not (load_rgb(target) == pixels).all():
+            raise ValueError("Frozen model carrier differs from the original crop")
+    else:
+        save_rgb(target, pixels)
+    return target
 
 
 def _decode_check(adapter, png: Path, metadata: Path, payload: list, indices: list) -> dict:
@@ -392,6 +414,7 @@ def process_image(
     source = _inside(bank, image["path"])
     if sha256(source) != image["sha256"]:
         raise ValueError("Original changed since manifest validation")
+    source = model_carrier(bank, model, source)
     payload, indices = message_for_model(model, image_id, policy["seed"])
     signature = _signature(model, image, policy)
     native = model_root / "native" / f"{stem}.png"
@@ -426,7 +449,7 @@ def process_image(
                 print(f"WM_DIAG BANK embed {model['id']} COCO {image_id}", flush=True)
                 output.parent.mkdir(parents=True, exist_ok=True)
                 adapter.embed(str(source), str(output), payload, str(metadata))
-                _check_png(output)
+                _check_png(output, model.get("native_size", 512))
                 if not metadata.is_file():
                     raise ValueError("Adapter did not preserve extraction metadata")
                 data = {"status": "ok", "psnr": psnr(load_rgb(source), load_rgb(output))}
@@ -448,6 +471,8 @@ def process_image(
                     if abs(data["psnr"] - target) > policy["tolerance"]:
                         raise ValueError("Saved matched PNG does not meet the target tolerance")
                     files = [output, *sorted(p for p in metadata.parent.rglob("*") if p.is_file())]
+            if files and source != _inside(bank, image["path"]):
+                files.append(source)
             record = _seal(
                 bank,
                 record_path,
@@ -460,6 +485,8 @@ def process_image(
                     "common_indices": indices,
                     "metadata": _relative(bank, metadata),
                     "source": image["path"],
+                    "carrier": _relative(bank, source),
+                    "carrier_sha256": sha256(source),
                     "output": _relative(bank, output) if files else None,
                     "execution": provenance,
                     "seconds": time.monotonic() - started,

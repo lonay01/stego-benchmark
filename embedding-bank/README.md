@@ -1,5 +1,12 @@
 # Reusable COCO embedding bank
 
+**29 September 2026 — method replacement.** The live registry now selects
+`meta_hidden_revisited` (48 raw bits, central 256×256 crop, checkpoint settings)
+instead of `hidden_benchmark`. See the [configuration and citation](../docs/meta-hidden-revisited.md).
+Historical notebooks/source ZIPs remain frozen and are not automatically migrated.
+This README's common30 workflow is historical; it is not the full-payload protocol.
+Never resume the changed method catalogue into an old bank or relabel its results.
+
 This stage prepares watermarked images once. The same saved PNGs can later be
 used for digital attacks, neural transformations and screen–camera experiments.
 It does **not** run attacks, generate calibration images, train models or claim
@@ -79,7 +86,7 @@ Only these 32 entries belong to this bank:
 
 | Group | Methods / variants |
 | --- | --- |
-| Existing digital baselines (15) | TrustMark-Q, WAM, VideoSeal, PixelSeal, ChunkySeal, VINE-B, VINE-R, RoSteALS, InvisMark, RivaGAN benchmark, DWT-DCT-SVD, MBRS, CIN, HiDDeN benchmark, EditGuard |
+| Existing digital baselines (15) | TrustMark-Q, WAM, VideoSeal, PixelSeal, ChunkySeal, VINE-B, VINE-R, RoSteALS, InvisMark, RivaGAN benchmark, DWT-DCT-SVD, MBRS, CIN, Meta Revisited HiDDeN, EditGuard |
 | Additional post-hoc methods (6) | ARWGAN, SSL Watermarking multibit, MaskWM, Robust-Wide, SepMark, OmniGuard |
 | Physical specialists (6) | StegaStamp ONNX, PIMoG, SSRH, SepWater, Fang Screen, Camera-Shooting Instance |
 | New additions (5) | TrustMark-B, TrustMark-P, FIN, FNNS from OmniSealBench, DistSeal post-hoc DC-AE |

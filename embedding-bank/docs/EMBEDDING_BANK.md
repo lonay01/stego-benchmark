@@ -1,5 +1,13 @@
 # Reusable COCO embedding bank
 
+**Historical common30 protocol.** This document describes the frozen notebook
+release, not the new full-payload study. As of 29 September 2026 the live registry
+replaces `hidden_benchmark` with `meta_hidden_revisited` (48 raw bits, central
+256×256 crop, checkpoint settings). Old notebooks and their matching source ZIPs
+retain their old identities. Do not rename prior results or resume a changed
+catalogue into an existing bank. The current profile and citation are specified
+in the repository's `docs/meta-hidden-revisited.md`.
+
 This stage prepares watermarked images once. The same saved PNGs can later be
 used for digital attacks, neural transformations and screen–camera experiments.
 It does **not** run attacks, generate calibration images, train models or claim

@@ -1,0 +1,48 @@
+{
+  "hidden_benchmark": {
+    "repo": "ando-khachatryan/HiDDeN",
+    "revision": "556f76dd0602e4351ed4c19bd2ee87d50ef3c0de",
+    "files": {
+      "model/encoder_decoder.py": "e51dafd6b3e6fd546898ef3a548dfe6f36557590",
+      "model/encoder.py": "30ec8b6ea10507eaead6253c8551d218fd8b6412",
+      "model/decoder.py": "bd204d7ba765d1bfb237351ab6d53a267d98c4d3",
+      "test_model.py": "3ecdf3435bf77891c8db1323a286f4ff968c41e3",
+      "utils.py": "5bf578db7aadfa0e81b9a8a24c4205071e9b1f3b"
+    }
+  },
+  "rosteals": {
+    "repo": "yakulex/RoSteALS",
+    "revision": "d193f13ba06e1ab373dad90b68f37c466cb7a1c3",
+    "files": {
+      "inference.py": "1f0eabfe8aeeb542d6b7be7928d34b3237a1653f",
+      "ldm/util.py": "8c09ca1c72f7ceb3f9d7f9546aae5561baf62b13"
+    }
+  },
+  "sepmark": {
+    "repo": "sh1newu/SepMark",
+    "revision": "4bf060da5b31abc2d623b6edf8aafcdd2d2f8db1",
+    "files": {
+      "test_Dual_Mark.py": "35405a08b573d5d8d9bafb707df51fc668def661",
+      "utils/save_images.py": "09ad1407cc407ab9f74575ec3379be3058e724b5",
+      "network/Encoder_U.py": "af35295bfbc6bffe82f510bab19ca89a75556162",
+      "network/Decoder_U.py": "e3ca17d4e2a57d710b71c12ff21c47c4d21ecddc"
+    }
+  },
+  "sepwater": {
+    "repo": "CVhnu/sepwater",
+    "revision": "4b99a4d3a99f504a09e5e743cffe745b8856e36a",
+    "files": {
+      "embed.py": "0778a90c5d15a505b02dd7f3c09f8cb19fcbc12a",
+      "extract.py": "c85cbe9030dbd586800f9a54627a597a9874dc65",
+      "Latent_Diffusion_Model/util.py": "bd9b4c8e0425e7b19263feef01bc8e16ca43fdb7"
+    }
+  },
+  "distseal_posthoc_dcae": {
+    "repo": "facebookresearch/distseal",
+    "revision": "d0a71cd272bb29e3b49cdc965bbaf4d24f2684ac",
+    "files": {
+      "notebooks/posthoc_dcae.ipynb": "ed4f682f4f95a9e56d198d6017140fc7dceb63b3",
+      "distseal/utils/display.py": "12f389aedd9a6999de259b263d73cd69b8a2d167"
+    }
+  }
+}

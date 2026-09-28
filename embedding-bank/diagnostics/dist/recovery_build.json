@@ -1,0 +1,7 @@
+{
+  "code_cells_compiled": 4,
+  "source_sha256": "5744031145af7e6324037b263d1cf91c0181920ad7f6f0138150fd2c4f1a7a29",
+  "notebook_sha256": "1555c644a88e69012bd13130e87c6a6da47bcdfd11e65b5bb15baa774b9b8444",
+  "production_source_policy": "Bundled verbatim; builder writes only diagnostics/dist",
+  "files_in_source_bundle": 82
+}

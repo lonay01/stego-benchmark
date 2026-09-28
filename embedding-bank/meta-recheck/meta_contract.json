@@ -1,0 +1,31 @@
+{
+  "repo": "facebookresearch/stable_signature",
+  "revision": "c91217c06e953a4eaf270ef9de4a3939bcea3366",
+  "checkpoint_sha256": "5a83d4d5c85f6d58abef7d1083d559dae1eb9171bf63ca0e0c13016fd4741443",
+  "files": {
+    "LICENSE": {
+      "git_blob": "fdd1be61996623799869b25e05046e89f4321c11",
+      "size": 19333
+    },
+    "hidden/README.md": {
+      "git_blob": "e243b1783d5282ceae7d7cf60780afcceecb6323",
+      "size": 8413
+    },
+    "hidden/attenuations.py": {
+      "git_blob": "1b18841b26a3ca0a4001f64d2094d68e2fa40444",
+      "size": 2202
+    },
+    "hidden/ckpts/hidden_replicate.pth": {
+      "git_blob": "4be01de7b6a623bc15ae431cb0c6717c299d62e9",
+      "size": 5737317
+    },
+    "hidden/models.py": {
+      "git_blob": "e89bd61c2ed6c8e24d6de8b9dd927ee96ff62949",
+      "size": 10556
+    },
+    "hidden/notebooks/demo.ipynb": {
+      "git_blob": "c96a809cd9898094bdc5823e412e13fda298d14c",
+      "size": 938153
+    }
+  }
+}

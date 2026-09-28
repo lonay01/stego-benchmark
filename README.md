@@ -1,6 +1,24 @@
 # stego-benchmark
 
-## Embedding bank
+## Full-payload canary (new)
+
+Test the 32 catalogue entries on five historical COCO images and five full-length
+messages per image. Decode Native and Matched PSNR39/42/45 PNGs, keep per-task
+checkpoints on Drive, and distinguish bit errors from environment/checkpoint
+blockers. This is a separate canary, not an automatic migration of the old bank.
+
+- [Notebook](embedding-bank/full-payload/dist/Embedding_Bank_FULL_PAYLOAD_CANARY.ipynb)
+- [Matching source ZIP](embedding-bank/full-payload/dist/Embedding_Bank_FULL_PAYLOAD_CANARY_source.zip)
+- [Run instructions and payload contracts](embedding-bank/full-payload/README.md)
+- [Executed checks and limitations](embedding-bank/full-payload/VALIDATION.md)
+
+Download the notebook and ZIP together; upload the notebook through Colab's
+File → Upload notebook menu and supply the ZIP when prompted.
+The canary has offline and limited real
+CPU smoke validation; the full 32-method GPU run is still to be performed.
+Do not start the 100-image bank until this canary has been reviewed.
+
+## Historical embedding bank (common30)
 
 Prepare watermarked images once, then reuse the saved PNGs in channel-specific
 experiments. This release saves Native and scalar-only Matched Quality outputs

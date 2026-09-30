@@ -12,7 +12,7 @@ used for digital attacks, neural transformations and screen–camera experiments
 It does **not** run attacks, generate calibration images, train models or claim
 that the complete benchmark has finished.
 
-The requested catalogue contains **32 post-hoc methods and variants**. Inclusion
+The requested catalogue contains **29 post-hoc methods and variants**. Inclusion
 in the catalogue is not proof that the required weights, software or adapter are
 available. Missing prerequisites are reported explicitly; no other method or
 checkpoint is substituted to fill a folder.
@@ -32,8 +32,7 @@ checkpoint is substituted to fill a folder.
   positions and deterministic filler. Preserve the complete native payload,
   common positions and any reserved bits in metadata. Do not overwrite
   method-specific detection positions or silently truncate a message.
-- Record raw capacity, useful payload length and ECC separately. Fang retains
-  its published CRC/BCH coding; it is not a raw30 neural watermark.
+- Record raw capacity, useful payload length and ECC separately.
 
 The five-image run is a prefix of the 100-image run. Changing only `N_IMAGES`
 from 5 to 100 must not change the original files, messages or scientific
@@ -82,13 +81,13 @@ A successfully measured nonzero BER is never retried to obtain a better message.
 
 ## 3. Strict method allowlist
 
-Only these 32 entries belong to this bank:
+Only these 29 entries belong to this bank:
 
 | Group | Methods / variants |
 | --- | --- |
 | Existing digital baselines (15) | TrustMark-Q, WAM, VideoSeal, PixelSeal, ChunkySeal, VINE-B, VINE-R, RoSteALS, InvisMark, RivaGAN benchmark, DWT-DCT-SVD, MBRS, CIN, Meta Revisited HiDDeN, EditGuard |
-| Additional post-hoc methods (6) | ARWGAN, SSL Watermarking multibit, MaskWM, Robust-Wide, SepMark, OmniGuard |
-| Physical specialists (6) | StegaStamp ONNX, PIMoG, SSRH, SepWater, Fang Screen, Camera-Shooting Instance |
+| Additional post-hoc methods (5) | ARWGAN, SSL Watermarking multibit, MaskWM, Robust-Wide, SepMark |
+| Physical specialists (4) | StegaStamp ONNX, PIMoG, SSRH, SepWater |
 | New additions (5) | TrustMark-B, TrustMark-P, FIN, FNNS from OmniSealBench, DistSeal post-hoc DC-AE |
 
 TrustMark variants and benchmark-specific implementations retain their explicit
@@ -102,9 +101,7 @@ removed methods are not brought back through an old registry's default list.
 | StegaStamp ONNX | Uses the WIBE raw100 ONNX conversion, not a claim of numerical equivalence to every TensorFlow implementation. CUDA inference requires the compatible ONNX Runtime libraries. |
 | PIMoG / SSRH | The original networks operate at 128 pixels in BGR. The documented adapter lifts their residual to the 512-pixel carrier. This adaptation stays fixed in all modes. |
 | SepWater | Supply the full matching author checkpoint; required encoder, autoencoder and decoder tensors must exist. A missing checkpoint is a blocker. |
-| Fang Screen | Requires licensed MATLAB with Image Processing and Communications Toolboxes. MATLAB Runtime or Octave is not a verified substitute. Feature-poor images can fail the original embedding algorithm. |
-| Camera-Shooting Instance | The current inventory has no verified runnable embedding/payload contract. It remains blocked until integration and checkpoint validation are completed. |
-| EditGuard / OmniGuard | Require the correct copyright-watermark checkpoints; localization-only weights are not interchangeable. |
+| EditGuard | Requires the correct copyright-watermark checkpoints; localization-only weights are not interchangeable. |
 | New additions | Public source and checkpoints do not replace a canary of the exact selected implementation, payload mapping and target environment. |
 
 Historical real CPU interface checks exist for StegaStamp ONNX, PIMoG and SSRH on
@@ -146,7 +143,7 @@ alongside them. Start with `_reports/REPORT.md` and its accompanying CSV tables
 when reviewing a run.
 
 With 100 images, one message and all four modes available, the upper count is
-**12,800 marked PNGs**. At five images it is **640 PNGs**. Model weights, Python
+**11,600 marked PNGs** for the 29 active entries. At five images it is **580 PNGs**. Model weights, Python
 environments and download caches are separate from this persistent image bank.
 Size the output and scratch disks separately, using the five-image run to measure
 actual file sizes.
@@ -168,8 +165,7 @@ into the image folders. Keep the SSD connected during writing.
 
 Native Windows is not a blanket compatibility guarantee for all upstream code.
 Some WIBE integrations use symbolic links or dependencies requiring compilation;
-Windows permissions, toolchains and available GPU wheels must be checked. Fang
-can use a locally installed licensed MATLAB. Unsupported environments must fail
+Windows permissions, toolchains and available GPU wheels must be checked. Unsupported environments must fail
 with a reason rather than fall back silently to another implementation.
 
 ### Colab Pro+
@@ -191,8 +187,7 @@ SCRATCH_ROOT = /content/watermarking_embedding_scratch
 A cloud Colab runtime **cannot write directly to the Samsung SSD connected to
 the Windows computer**. Save the durable bank to Drive, then copy it to
 `E:/watermarking_embedding_bank_v1`. Local `/content` storage is temporary and
-must not be the only location of completed results. Colab does not supply a
-licensed MATLAB installation for Fang.
+must not be the only location of completed results.
 
 Run from the project environment after preparing the input corpus and settings:
 

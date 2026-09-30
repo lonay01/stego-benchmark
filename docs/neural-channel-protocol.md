@@ -6,9 +6,9 @@ This protocol tests watermark recovery after neural image reconstruction, regene
 
 **Payload policy: full native payload, revision 21 September 2026.** The three channel protocols use one shared embedding bank. The earlier common-30-bit evaluation is not the policy for this run.
 
-**Method update, 29 September 2026:** [Meta Revisited HiDDeN](meta-hidden-revisited.md) replaces the old HiDDeN benchmark entry. Use the same 48-bit, 256×256 crop-based bank as in the digital channel; do not re-embed at 512 or substitute Meta's JND demo. Any resizing required by a neural attack belongs to the recorded channel transform, not to embedding. The scope remains 32 entries.
+**Method update, 29 September 2026:** [Meta Revisited HiDDeN](meta-hidden-revisited.md) replaces the old HiDDeN benchmark entry. Use the same 48-bit, 256×256 crop-based bank as in the digital channel; do not re-embed at 512 or substitute Meta's JND demo. Any resizing required by a neural attack belongs to the recorded channel transform, not to embedding. After removing the three blocked entries, the active scope is 29 entries.
 
-The scope is the 32 existing-image entries in the [model catalogue](model-catalogue.md). The nine generation-time methods are excluded and will have a separate protocol. This is an evaluation of pretrained methods, not a training protocol; method-specific optimisation during embedding remains part of the encoder.
+The scope is the 29 existing-image entries in the [model catalogue](model-catalogue.md). The nine generation-time methods are excluded and will have a separate protocol. This is an evaluation of pretrained methods, not a training protocol; method-specific optimisation during embedding remains part of the encoder.
 
 ## 1. Images and messages
 
@@ -25,14 +25,14 @@ Cross-method pairing uses **image ID and message-replicate index**, not an assum
 
 Mandatory native ECC remains part of the selected implementation. Record L_i, the raw/coded output length, reserved positions, bit order, and ECC configuration separately. Reserved detection bits and parity bits are not independent message capacity and must not be overwritten. For a raw-bit interface, score all exposed variable message bits; for a mandatory-ECC interface, score the complete useful message after native decoding and report raw coded-bit errors separately where available. Label these interfaces in every comparison. Keys and reserved-bit settings remain identical between modes and channels.
 
-The planned set contains the following 32 entries:
+The planned set contains the following 29 entries:
 
 | Catalogue group | Entries | Methods |
 |---|---:|---|
 | Existing-image track | 22 | TrustMark-Q, WAM, VideoSeal, PixelSeal, ChunkySeal, VINE-B, VINE-R, RoSteALS, InvisMark, RivaGAN benchmark, DWT-DCT-SVD, MBRS, CIN, Meta Revisited HiDDeN, ARWGAN, SSL Watermarking (multibit), MaskWM, Robust-Wide, SepMark (robust tracing), StegaStamp ONNX benchmark, PIMoG, SSRH |
-| Additional integration requirements | 5 | EditGuard (copyright component), OmniGuard (copyright component), SepWater, Fang Screen-Shooting Resilient Watermarking, Camera-Shooting Instance |
+| Additional integration requirements | 2 | EditGuard (copyright component), SepWater |
 | New additions awaiting integration | 5 | TrustMark-B, TrustMark-P, FIN, FNNS (OmniSealBench implementation), DistSeal (post-hoc DC-AE) |
-| **Total** | **32** | Checkpoint variants are separate entries, not necessarily independent architectures. |
+| **Total** | **29** | Checkpoint variants are separate entries, not necessarily independent architectures. |
 
 The run manifest identifies the implementation, checkpoint, payload interface, numerical precision, native resolution, preprocessing, and embedding settings for each entry. The catalogue's integration restrictions still apply: listing a method here does not establish that its weights, adapter, or full-payload interface have passed validation. Missing dependencies or an incompatible interface are reported as blockers, not silently replaced with another method. Check full-message decoding at the author's resolution, after PNG saving, and after adaptation to 512 × 512 where applicable, including FIN. Use the same preflight records as the digital run. DistSeal uses post-hoc embedding into an existing image, not its generation-time mode.
 
@@ -92,7 +92,7 @@ flowchart TD
     K --> R
 ```
 
-Embedding is performed once per method and image–message pair. Native and the three Matched Quality images are derived from that same encoder output. Attacks consume the saved PNGs; they do not rerun embedding or matching. Existing digital artifacts can be reused only if their source images, complete messages, payload-interface metadata, key state, checkpoint, embedding settings, scalar-matching specification, and artifact hashes agree with this protocol. The shared bank contains up to 640 × N marked PNGs for all 32 entries and four configurations; changing the channel does not require a new bank.
+Embedding is performed once per method and image–message pair. Native and the three Matched Quality images are derived from that same encoder output. Attacks consume the saved PNGs; they do not rerun embedding or matching. Existing digital artifacts can be reused only if their source images, complete messages, payload-interface metadata, key state, checkpoint, embedding settings, scalar-matching specification, and artifact hashes agree with this protocol. The shared bank contains up to 580 × N marked PNGs for all 29 entries and four configurations; changing the channel does not require a new bank.
 
 Each attack starts from the selected pre-attack marked image, not from the output of another attack. The two-pass VAE condition is the only specified chain. The same attack settings, instructions, masks, and repeat seeds are used across watermark methods and embedding modes. Identical seeds couple the repetitions; they do not make different input images produce identical edited content.
 
@@ -129,7 +129,7 @@ At 512 × 512, the inpainting mask is the half-open rectangle **[128, 384) × [1
 
 There are **21 conditions**, including repeats and Clean, per image–message pair and mode configuration: 1 Clean + 2 VAE + 9 img2img + 6 instruction edits + 3 inpainting.
 
-With five messages and four configurations (Native plus three PSNR targets), the complete matrix is **420 × N decoding evaluations per method**. For 32 entries, the planned maximum is **13,440 × N**: 67,200 evaluations at N = 5, or 1,344,000 at N = 100. These counts include Clean, exclude any separate negative-control campaign, and assume every entry is runnable and every matching target succeeds. Technical failures and matching failures are reported against the planned matrix rather than erased from it.
+With five messages and four configurations (Native plus three PSNR targets), the complete matrix is **420 × N decoding evaluations per method**. For 29 entries, the planned maximum is **12,180 × N**: 60,900 evaluations at N = 5, or 1,218,000 at N = 100. These counts include Clean, exclude any separate negative-control campaign, and assume every entry is runnable and every matching target succeeds. Technical failures and matching failures are reported against the planned matrix rather than erased from it.
 
 ## 5. Metrics
 
@@ -168,7 +168,7 @@ This is a **capacity–quality–robustness comparison, not an equal-payload exp
 
 ## 7. Scope, reuse, and run records
 
-This is the specification for the next neural-channel run, not a claim that all 32 entries have already been implemented or tested. The five-image run checks the full matrix on a small sample; changing N to 100 must not change messages, matching rules, attacks, or previously assigned seeds. A five-image result is not the main 100-image experiment.
+This is the specification for the next neural-channel run, not a claim that all 29 entries have already been implemented or tested. The five-image run checks the full matrix on a small sample; changing N to 100 must not change messages, matching rules, attacks, or previously assigned seeds. A five-image result is not the main 100-image experiment.
 
 Store source and marked PNGs, payloads and required key state, alpha records, captions, masks, attack configurations, output hashes, per-task metrics, logs, dependency versions, and checkpoint hashes in persistent storage. Private key material need not be published, but the run must retain what is required to reproduce extraction. A completed task is reusable only after its specification and input/output hashes are validated. File existence alone is not a completion check. Partially written tasks remain incomplete; resuming the same run must not recompute valid embedding or attack artifacts unnecessarily.
 

@@ -1,0 +1,15 @@
+{
+  "scope": "Local CPU/static verification; not a CUDA inference run",
+  "bchlib": "2.1.3",
+  "bch_synthetic_tests": 1300,
+  "actual_sepwater_text_cases_replayed": 500,
+  "corrected_png_exact": 496,
+  "corrected_raw_exact": 498,
+  "slackclient": "2.9.3",
+  "slack_webclient_and_author_tools_import": "passed on local Python 3.12",
+  "slack_network_client_created": false,
+  "linux_rosteals_lock_resolved": true,
+  "previous_rosteals_dependency_pins_preserved": true,
+  "only_added_pin": "slackclient==2.9.3",
+  "gpu_run": false
+}

@@ -21,7 +21,8 @@ PROJECT = Path(__file__).resolve().parents[1]
 class MetaContractTests(unittest.TestCase):
     def test_replaces_one_entry_without_relabelling_old_results(self):
         models = bank_registry(PROJECT)
-        self.assertEqual(len(models), 32)
+        self.assertEqual(len(models), 29)
+        self.assertTrue({"omniguard", "fang_screen", "camera_shooting_instance"}.isdisjoint(models))
         self.assertNotIn("hidden_benchmark", models)
         model = models["meta_hidden_revisited"]
         self.assertEqual(model["native_bits"], 48)

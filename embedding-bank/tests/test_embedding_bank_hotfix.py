@@ -17,13 +17,16 @@ PROJECT = Path(__file__).resolve().parents[1]
 
 class BlockedQueueTests(unittest.TestCase):
     def test_unimplemented_camera_has_no_completion_signature(self):
-        model = bank.bank_registry(PROJECT)["camera_shooting_instance"]
+        model = {"id": "test_blocked", "native_bits": 0,
+                 "capability": {"status": "integration_required"}}
         with patch.object(bank, "_signature", side_effect=AssertionError("must not sign")):
             self.assertFalse(bank._complete(Path("unused"), model, [{"image_id": "139"}], True))
 
     def test_blocked_camera_does_not_prevent_the_last_five_methods(self):
         registry = bank.bank_registry(PROJECT)
-        selected = list(bank.MODEL_IDS[-6:])
+        registry["test_blocked"] = {"id": "test_blocked", "native_bits": 0,
+                                    "capability": {"status": "integration_required"}}
+        selected = ["test_blocked", *bank.MODEL_IDS[-5:]]
         seen = []
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -1,0 +1,9 @@
+{
+  "sha256": "cf8f5af6c5659cf2d05bca1f67afb35cc082d40142053b3904a6013b6365e4f9",
+  "base_sha256": "74d37a9c372beaaa10c45f3b44cb05d0a2eca08bfd302b97d620e0697e335a78",
+  "prior_code_sha256": "e60b3e38342d1054bdb3e102b13f04b17b7db62cf82c36b0b039b24ca90384c0",
+  "python_modules": 81,
+  "notebook": "Four_Method_NIGHT_CHECK.ipynb",
+  "archive": "Four_Method_NIGHT_CHECK_source.zip",
+  "code_cells": 4
+}

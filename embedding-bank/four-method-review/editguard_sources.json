@@ -1,0 +1,12 @@
+{
+  "editguard": {
+    "repo": "xuanyuzhang21/EditGuard",
+    "revision": "174778fb371640bb31b32fcb9f7bfd440c88766b",
+    "files": {
+      "code/models/IBSN.py": "71ecc5e646e487aebf936efcbbf3ff2880f2f6a7",
+      "code/models/base_model.py": "fe45d62dae1611a6e141039eaa6f2a794920b9f9",
+      "code/options/test_editguard.yml": "53ae17a241682c1867f5351d4ed66a4fc675a679",
+      "code/utils/util.py": "71b455bbb9f04d177a1b99be6458a1692c713701"
+    }
+  }
+}

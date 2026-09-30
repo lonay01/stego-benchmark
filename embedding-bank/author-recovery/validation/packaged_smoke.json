@@ -1,0 +1,39 @@
+{
+  "scope": "Distributed ZIP execution on CPU, not CUDA",
+  "tests": ".................s                                                       [100%]\n17 passed, 1 skipped in 0.40s",
+  "saved_bit_replay": {
+    "scope": "Actual saved SepWater bits; corrected BCH only; no GPU inference",
+    "selftest": {
+      "passed": true,
+      "random_trials": {
+        "0": 200,
+        "1": 200,
+        "2": 200,
+        "3": 200,
+        "4": 200,
+        "5": 200
+      },
+      "single_position_trials": 100,
+      "total_trials": 1300,
+      "guaranteed_radius": 5,
+      "note": "More than five errors may be rejected OR miscorrected; acceptance is not proof of exact recovery."
+    },
+    "totals": {
+      "raw_internal": {
+        "cases": 500,
+        "data_exact": 498,
+        "rejected": 2,
+        "accepted_but_wrong": 0,
+        "legacy_text_exact": 397
+      },
+      "author_png": {
+        "cases": 500,
+        "data_exact": 496,
+        "rejected": 4,
+        "accepted_but_wrong": 0,
+        "legacy_text_exact": 381
+      }
+    }
+  },
+  "gpu_run": false
+}

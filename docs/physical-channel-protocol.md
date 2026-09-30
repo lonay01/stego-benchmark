@@ -6,7 +6,7 @@ This protocol tests watermark recovery after **screen–camera transmission**. I
 
 **Payload policy: full native payload, revision 21 September 2026.** The three channel protocols use one shared embedding bank. The earlier common-30-bit evaluation is not the policy for this run.
 
-**Method update, 29 September 2026:** [Meta Revisited HiDDeN](meta-hidden-revisited.md) replaces the old HiDDeN benchmark entry. Its saved carrier is 256×256 with 48 message bits, identical across all channels. The screen-camera implementation must explicitly record any display scaling and its rectification grid; the 512-pixel COCO source is not this method's marked carrier. Do not silently upsample the embedding bank or pool old HiDDeN scores with Meta. The scope remains 32 entries.
+**Method update, 29 September 2026:** [Meta Revisited HiDDeN](meta-hidden-revisited.md) replaces the old HiDDeN benchmark entry. Its saved carrier is 256×256 with 48 message bits, identical across all channels. The screen-camera implementation must explicitly record any display scaling and its rectification grid; the 512-pixel COCO source is not this method's marked carrier. Do not silently upsample the embedding bank or pool old HiDDeN scores with Meta. After removing the three blocked entries, the active scope is 29 entries.
 
 The acquisition uses a **2 × 2 grid of four marked images**, with **one captured photograph per board and physical condition**. There are no three-shot repeats and no best-frame selection. Extraction is assisted by external geometric markers; this is not a test of unaided image localisation.
 
@@ -20,14 +20,14 @@ Generate five reproducible full-length random messages per image. For each (COCO
 
 Do not repeat a short message to fill a larger payload, add benchmark-level ECC, or score only the first or last 30 bits. Mandatory native ECC remains part of the selected implementation. Record L_i, raw/coded output length, reserved positions, bit order, and ECC configuration separately. Reserved detection bits and parity bits are not independent message capacity and must not be overwritten. For a raw-bit interface, score all exposed variable message bits; for a mandatory-ECC interface, score the complete useful message after native decoding and report raw coded-bit errors separately where available. Label these interfaces in every comparison. Keys and reserved-bit settings remain identical between modes and channels.
 
-The planned set contains the same 32 existing-image entries as the neural protocol:
+The planned set contains the same 29 existing-image entries as the neural protocol:
 
 | Catalogue group | Entries | Methods |
 |---|---:|---|
 | Existing-image track | 22 | TrustMark-Q, WAM, VideoSeal, PixelSeal, ChunkySeal, VINE-B, VINE-R, RoSteALS, InvisMark, RivaGAN benchmark, DWT-DCT-SVD, MBRS, CIN, Meta Revisited HiDDeN, ARWGAN, SSL Watermarking (multibit), MaskWM, Robust-Wide, SepMark (robust tracing), StegaStamp ONNX benchmark, PIMoG, SSRH |
-| Additional integration requirements | 5 | EditGuard (copyright component), OmniGuard (copyright component), SepWater, Fang Screen-Shooting Resilient Watermarking, Camera-Shooting Instance |
+| Additional integration requirements | 2 | EditGuard (copyright component), SepWater |
 | New additions awaiting integration | 5 | TrustMark-B, TrustMark-P, FIN, FNNS (OmniSealBench implementation), DistSeal (post-hoc DC-AE) |
-| **Total** | **32** | Entries include checkpoint variants; they are not 32 independent architectures. |
+| **Total** | **29** | Entries include checkpoint variants; they are not 29 independent architectures. |
 
 The nine generation-time methods are excluded. Inclusion here does not establish that an adapter or checkpoint has passed validation. The [catalogue](model-catalogue.md) restrictions, including FIN's resolution adaptation and the unverified interfaces, remain in force. Missing weights, dependencies, or an incompatible payload interface are explicit blockers, not permission to substitute another method.
 
@@ -91,7 +91,7 @@ flowchart TD
 - The primary display is one monitor operating at **2560 × 1440 physical pixels**, subject to hardware verification. Record its exact model, panel dimensions, refresh rate, display profile, brightness setting, and connection. The label “2K” alone does not identify these properties.
 - Display each image at **512 × 512 panel pixels** in a centred 2 × 2 layout. Verify actual output scaling with a pixel-grid test; a 512-pixel UI rectangle is not sufficient evidence of 1:1 presentation. Disable fit-to-window scaling and transitions. Freeze colour-management settings and record them.
 - Put fiducial markers, borders, and a board identifier **outside** the four image regions. Fix their geometry, colours, and background before the run. Markers identify geometry and jobs; they do not encode the hidden message or recovered bits. Archive the complete board layout and displayed raster.
-- Each board contains four different methods using the **same COCO image, message-replicate index, and mode/PSNR target**. Full message lengths can differ between tiles. This keeps scene content comparable within a photograph without pretending that payloads are equal. The 32 entries form eight boards for each image–replicate–mode combination when all entries are available.
+- Each board contains four different methods using the **same COCO image, message-replicate index, and mode/PSNR target**. Full message lengths can differ between tiles. This keeps scene content comparable within a photograph without pretending that payloads are equal. The 29 entries form eight boards (the last has one data tile and three fixed non-scored fillers) for each image–replicate–mode combination when all entries are available.
 - Precompute method grouping, slot assignment, and board order. Balance each method across the four positions over the image/message set; preserve the assignment across physical conditions and embedding modes. Do not require four extra photographs to rotate every individual task through all positions.
 - If a reserved slot is blocked or unmatched, retain its assignment and show the corresponding unmarked source as a labelled placeholder in the manifest. It is not a completed watermark trial. Do not move other methods into a more favourable slot after seeing results. A board with no eligible trials can be skipped with all affected statuses recorded.
 
@@ -142,17 +142,17 @@ Also run the **digital Clean control** by decoding each saved marked PNG directl
 
 ### Workload
 
-For 32 entries, five messages, and four mode configurations:
+For 29 entries, five messages, and four mode configurations:
 
-- Saved marked images: **32 × N × 5 × 4 = 640 × N**.
-- Physical tile evaluations: **640 × N × 7 = 4,480 × N**.
-- Four tiles per photograph: **1,120 × N captures** for one display/camera pair.
-- Digital Clean controls: another **640 × N** decoding evaluations, which can be reused from a compatible run.
+- Saved marked images: **29 × N × 5 × 4 = 580 × N**.
+- Physical scored tile evaluations: **580 × N × 7 = 4,060 × N**.
+- Up to four data tiles per photograph: **ceil(29/4) × N × 5 × 4 × 7 = 1,120 × N captures** for one display/camera pair. The final board's three filler tiles are not scored.
+- Digital Clean controls: another **580 × N** decoding evaluations, which can be reused from a compatible run.
 
 | Test images N | Marked PNGs | Physical captures | Physical tile evaluations | Capture time at 5 seconds per board |
 |---|---:|---:|---:|---|
-| 5 | 3,200 | 5,600 | 22,400 | 7 h 46 min 40 s |
-| 100 | 64,000 | 112,000 | 448,000 | 155 h 33 min 20 s, approximately 6.5 continuous days |
+| 5 | 2,900 | 5,600 | 20,300 | 7 h 46 min 40 s |
+| 100 | 58,000 | 112,000 | 406,000 | 155 h 33 min 20 s, approximately 6.5 continuous days |
 
 These are planned full-matrix counts assuming all entries and PSNR targets are available. They exclude setup, changing camera position, infrastructure retries, storage overhead, and decoding. Additional displays are separate campaigns and increase the workload. Blocked or unmatched tasks remain visible in coverage records rather than silently reducing the declared experimental scope.
 
@@ -197,4 +197,4 @@ Keep the source and marked PNGs, full board manifest, messages and required key 
 
 Resume by validated job specification and input/output hashes, not filenames alone. Do not recapture or re-embed completed valid tasks. Partial transfers remain incomplete, and retries retain their provenance. Decoding can resume independently from the saved photographs. A technically complete queue is not proof that every planned method or matching target was available.
 
-This document is the specification for the next physical run, not a claim that acquisition software or all 32 model adapters have already been implemented and verified. Older common-30-bit runs, single-image pilots, and pixel-wise PSNR-matching runs keep their original descriptions and files. Full-message metrics may be recomputed only from verified complete expected/decoded bit strings; re-scoring does not turn fixed filler into new random messages. Changed payloads, adapters, or assignments require a new versioned bank, not overwriting or mixing old results. This documentation revision does not modify the released notebook. Existing photographs can be reused only when their source-bank records establish compatibility.
+This document is the specification for the next physical run, not a claim that acquisition software or all 29 model adapters have already been implemented and verified. Older common-30-bit runs, single-image pilots, and pixel-wise PSNR-matching runs keep their original descriptions and files. Full-message metrics may be recomputed only from verified complete expected/decoded bit strings; re-scoring does not turn fixed filler into new random messages. Changed payloads, adapters, or assignments require a new versioned bank, not overwriting or mixing old results. This documentation revision does not modify the released notebook. Existing photographs can be reused only when their source-bank records establish compatibility.

@@ -1,6 +1,8 @@
 # Model catalogue and channel focus
 
-This catalogue covers 41 method entries selected for evaluation, including five newly added candidates awaiting integration and smoke tests. It separates **what a method was designed for** from **which channels we test it on**. Inclusion here is not evidence of a completed experiment.
+This catalogue covers 38 method entries selected for evaluation, including five newly added candidates awaiting integration and smoke tests. It separates **what a method was designed for** from **which channels we test it on**. Inclusion here is not evidence of a completed experiment.
+
+**Scope revision, 29 September 2026:** three blocked entries were removed from active selection. Historical results and frozen releases are retained; this is an integration decision, not a negative measurement of the methods. There are now **29 existing-image entries plus 9 generation-time entries**.
 
 ## How to read the channel labels
 
@@ -66,17 +68,14 @@ In this benchmark they use Native mode and a separate generation/control protoco
 
 Generation-time embedding and resilience to neural editing are separate classification axes. For example, VINE and Robust-Wide belong to the common-image track even though their focus is neural editing.
 
-## 3. Candidates with additional requirements: 5 methods
+## 3. Candidates with additional requirements: 2 methods
 
-These entries remain in the catalogue but are listed separately from the 22 existing-image methods above. Together with the five new additions below, they bring the planned existing-image protocol set to 32. Restrictions describe the integration record; they are not claims that the methods are impossible to run or that no weights exist publicly.
+These entries remain in the catalogue but are listed separately from the 22 existing-image methods above. Together with the five new additions below, they bring the planned existing-image protocol set to 29. Restrictions describe the integration record; they are not claims that the methods are impossible to run or that no weights exist publicly.
 
 | Registry ID | Method / source | Channel focus | Requirement or protocol difference |
 |---|---|---|---|
 | `editguard` | [EditGuard](https://github.com/xuanyuzhang21/EditGuard) | Digital / Neural | Copyright protection and tamper localization, including AI edits. Reuse and verify the previous digital run's degrade.pth checkpoint for the selected 64-bit copyright component. Localization is a separate task. |
-| `omniguard` | [OmniGuard copyright component](https://github.com/xuanyuzhang21/OmniGuard) | Digital / Neural | Hybrid manipulation localization and copyright protection. A matching trained 100-bit copyright checkpoint must be verified; localization weights are not interchangeable. |
 | `sepwater` | [SepWater](https://github.com/CVhnu/sepwater) | Physical | Anti-screen-shooting latent-space watermarking. Requires the complete author checkpoint; selected interface uses 100 raw bits. |
-| `fang_screen` | [Fang Screen-Shooting Resilient Watermarking](https://github.com/FangHanNUS/Screen-Shooting-Resilient-Watermarking) | Physical | Requires licensed MATLAB and the relevant toolboxes. Supports 30 useful bits with CRC/BCH; coded and uncoded evaluations must be distinguished. |
-| `camera_shooting_instance` | [Camera-Shooting Resilient Image Instance](https://github.com/gyz-star/Camera-Shooting-Resilient-Watermarking-on-Image-Instance-Level) | Physical | Checkpoint access, instance-level preprocessing, and payload interface still require validation. |
 
 ## 4. New additions awaiting integration: 5 entries
 
@@ -100,11 +99,11 @@ For DistSeal, both Native quality and Matched Quality are measured against the o
 |---|---:|
 | Existing-image track | 22 |
 | Generation-time track | 9 |
-| Additional requirements | 5 |
+| Additional requirements | 2 |
 | New additions awaiting integration | 5 |
-| **Total** | **41** |
+| **Total** | **38** |
 
-These counts describe benchmark entries, not 41 independent architectures or 41 completed runs. VINE-B/VINE-R and TrustMark-Q/B/P are intentionally separate entries within their respective families. Channel tags overlap, so they should not be turned into exclusive group counts without an explicit rule.
+These counts describe benchmark entries, not 38 independent architectures or 38 completed runs. VINE-B/VINE-R and TrustMark-Q/B/P are intentionally separate entries within their respective families. Channel tags overlap, so they should not be turned into exclusive group counts without an explicit rule.
 
 Source links support the stated research scope. Payload and integration notes describe the selected benchmark configurations, based on the implementation inventory reviewed on 13 September 2026. Execution status and missing-checkpoint gates must be checked against the actual run records before claiming that a method was evaluated. This catalogue does not replace those records or a checkpoint manifest.
 

@@ -6,7 +6,7 @@ This protocol tests watermark recovery after digital image distortions. It uses 
 
 **Payload policy: full native payload, revision 21 September 2026.** The three channel protocols use one shared embedding bank. The earlier common-30-bit evaluation is not the policy for this run.
 
-**Method update, 29 September 2026:** replace the old HiDDeN benchmark entry with [Meta Revisited HiDDeN](meta-hidden-revisited.md). Its fixed profile uses all 48 bits and a central 256×256 crop of the frozen RGB512 source, without resizing. Measure embedding quality and perform scalar matching against that crop. Reuse the same saved carrier across channels; do not merge old HiDDeN measurements into the Meta row. The scope remains 32 entries.
+**Method update, 29 September 2026:** replace the old HiDDeN benchmark entry with [Meta Revisited HiDDeN](meta-hidden-revisited.md). Its fixed profile uses all 48 bits and a central 256×256 crop of the frozen RGB512 source, without resizing. Measure embedding quality and perform scalar matching against that crop. Reuse the same saved carrier across channels; do not merge old HiDDeN measurements into the Meta row. After removing the three blocked entries, the active scope is 29 entries.
 
 ## 1. Images and messages
 
@@ -29,14 +29,14 @@ Do not repeat a short message to fill a larger payload, add benchmark-level ECC,
 
 ### Methods and validation
 
-The scope is the same 32 existing-image entries as the [neural](neural-channel-protocol.md) and [physical](physical-channel-protocol.md) protocols:
+The scope is the same 29 existing-image entries as the [neural](neural-channel-protocol.md) and [physical](physical-channel-protocol.md) protocols:
 
 | Catalogue group | Entries | Methods |
 |---|---:|---|
 | Existing-image track | 22 | TrustMark-Q, WAM, VideoSeal, PixelSeal, ChunkySeal, VINE-B, VINE-R, RoSteALS, InvisMark, RivaGAN benchmark, DWT-DCT-SVD, MBRS, CIN, Meta Revisited HiDDeN, ARWGAN, SSL Watermarking (multibit), MaskWM, Robust-Wide, SepMark (robust tracing), StegaStamp ONNX benchmark, PIMoG, SSRH |
-| Additional integration requirements | 5 | EditGuard (copyright component), OmniGuard (copyright component), SepWater, Fang Screen-Shooting Resilient Watermarking, Camera-Shooting Instance |
+| Additional integration requirements | 2 | EditGuard (copyright component), SepWater |
 | New additions awaiting integration | 5 | TrustMark-B, TrustMark-P, FIN, FNNS (OmniSealBench implementation), DistSeal (post-hoc DC-AE) |
-| **Total** | **32** | Checkpoint variants are separate entries, not necessarily independent architectures. |
+| **Total** | **29** | Checkpoint variants are separate entries, not necessarily independent architectures. |
 
 The nine generation-time entries remain outside this protocol. The [catalogue](model-catalogue.md) restrictions still apply; inclusion does not establish that an adapter or checkpoint has passed validation.
 
@@ -99,7 +99,7 @@ flowchart TD
     K --> R
 ```
 
-Embedding is performed once per method and image–message pair. Native and all three Matched Quality candidates are derived from that same encoder output. Save PNGs, full messages, required key state, payload-interface metadata, matching records, and hashes in a versioned bank. The same validated PNGs are then used in the digital, neural, and physical channels; attacks do not rerun embedding. The planned bank contains 32 × N × 5 × 4 = **640 × N** images when all entries and targets are available: 3,200 at N = 5, or 64,000 at N = 100.
+Embedding is performed once per method and image–message pair. Native and all three Matched Quality candidates are derived from that same encoder output. Save PNGs, full messages, required key state, payload-interface metadata, matching records, and hashes in a versioned bank. The same validated PNGs are then used in the digital, neural, and physical channels; attacks do not rerun embedding. The planned bank contains 29 × N × 5 × 4 = **580 × N** images when all entries and targets are available: 2,900 at N = 5, or 58,000 at N = 100.
 
 Attack, decoding, and evaluation stages are shared by both modes. Each attack starts from the saved pre-attack marked image, not from the output of the previous attack. Only the compound attack uses a sequence of transformations. Resume by specification and input/output hashes, not file existence alone; incomplete and blocked tasks remain visible.
 

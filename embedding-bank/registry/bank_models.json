@@ -1183,49 +1183,6 @@
     "validated_lock": "locks/legacy_editguard.lock"
   },
   {
-    "id": "omniguard",
-    "family": "OmniGuard copyright component",
-    "origin_group": "forensic_hybrid",
-    "track": "posthoc",
-    "backend": "python",
-    "adapter": "wmbench.adapters.extended:OmniGuardCopyrightAdapter",
-    "native_bits": 100,
-    "python": "3.10",
-    "environment": "ext_omniguard",
-    "validated_lock": "locks/extended_omniguard.lock",
-    "requirements": [
-      "torch==2.2.2",
-      "torchvision==0.17.2",
-      "numpy==1.26.4",
-      "Pillow==10.4.0",
-      "huggingface-hub==0.34.4"
-    ],
-    "source": {
-      "url": "https://github.com/xuanyuzhang21/OmniGuard.git",
-      "revision": "2e3c86b3650cb904d2a8a112c640a78895aa93eb"
-    },
-    "assets": [],
-    "options": {
-      "weights": "omniguard-copyright-verified.pth"
-    },
-    "manual_assets": [
-      {
-        "path": "omniguard-copyright-verified.pth",
-        "url": "https://github.com/xuanyuzhang21/OmniGuard",
-        "note": "Requires matching trained copyright checkpoint; published localization weights are NOT interchangeable."
-      }
-    ],
-    "capability": {
-      "status": "needs_manual_asset",
-      "explanation": "Author copyright architecture/training schema (100 bits) is implemented, but a matching downloadable trained copyright checkpoint has not been verified. Published checkpoint.zip/demo loads anti-manipulation/localization networks, which cannot be treated as this bit decoder. Supply matching copyright state, then pass strict loading and preflight."
-    },
-    "author_checkpoint_reference": "https://drive.google.com/file/d/1khdBDUDIRIhPIKlV0ictcbTdWLh-WFY_/view?usp=sharing",
-    "notes": [
-      "Full OmniGuard localization masks are a different metric/track; this adapter covers only the copyright component.",
-      "Never substitute randomly initialized copyright weights or anti-manipulation checkpoints."
-    ]
-  },
-  {
     "id": "sepwater",
     "family": "SepWater",
     "origin_group": "physical",
@@ -1277,69 +1234,5 @@
     },
     "license": "CC-BY-NC-4.0",
     "notes": "Concrete author encode/decode API. Native raw100 bypasses the optional text+BCH helper. Incomplete inference checkpoint keys are errors, never random initialization."
-  },
-  {
-    "id": "fang_screen",
-    "family": "Fang Screen-Shooting Resilient Watermarking",
-    "origin_group": "physical",
-    "track": "posthoc",
-    "backend": "matlab",
-    "adapter": "wmbench.adapters.physical:FangScreen",
-    "native_bits": 30,
-    "python": "3.10",
-    "environment": "phys_fang_matlab",
-    "validated_lock": "locks/physical_fang_screen.lock",
-    "requirements": [
-      "numpy==1.26.4",
-      "Pillow==10.4.0",
-      "huggingface-hub==0.34.4"
-    ],
-    "source": {
-      "url": "https://github.com/FangHanNUS/Screen-Shooting-Resilient-Watermarking.git",
-      "revision": "c544825f4a7fc4efd2d4aba2b21971b57593e8a6"
-    },
-    "assets": [],
-    "options": {
-      "timeout_seconds": 900
-    },
-    "capability": {
-      "status": "ready_unverified",
-      "requires_matlab": true,
-      "useful_bits": 30,
-      "raw_bits": 64,
-      "model_resolution": 512,
-      "ecc": "CRC6 + BCH(63,36) + 1 padding bit"
-    },
-    "notes": "Licensed MATLAB plus Image Processing and Communications Toolboxes. Calls Embedding_test/Extracting_test directly; no GUI. Fails explicitly if the image has insufficient feature regions."
-  },
-  {
-    "id": "camera_shooting_instance",
-    "family": "Camera-Shooting Resilient Image Instance",
-    "origin_group": "physical",
-    "track": "posthoc",
-    "backend": "python",
-    "adapter": "wmbench.adapters.physical:UnavailablePhysicalCandidate",
-    "native_bits": 0,
-    "python": "3.10",
-    "environment": "phys_camera_instance_inventory",
-    "requirements": [],
-    "source": {
-      "url": "https://github.com/gyz-star/Camera-Shooting-Resilient-Watermarking-on-Image-Instance-Level.git",
-      "revision": "695d2471b8a88c7c127df8ec3f89571455e4b7d3"
-    },
-    "assets": [],
-    "manual_assets": [
-      {
-        "url": "https://pan.baidu.com/s/19gRqgIo_rDqUi5UnU5bhkQ?pwd=0518",
-        "path": "premodel.zip",
-        "purpose": "Author checkpoint bundle; Baidu password 0518. Access and inference interface not verified."
-      }
-    ],
-    "options": {
-      "unavailable_reason": "Author premodel.zip from Baidu is unavailable locally; instance segmentation/rectification plus payload interface need validation before integration."
-    },
-    "capability": {
-      "status": "integration_required"
-    }
   }
 ]

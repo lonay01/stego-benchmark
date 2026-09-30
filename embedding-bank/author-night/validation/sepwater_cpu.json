@@ -1,0 +1,16 @@
+{
+  "scope": "CPU source + pretrained secret-control weights; NOT full model GPU inference",
+  "torch": "2.5.1+cpu",
+  "cuda": false,
+  "source_blob": "797b7b24b4813e16db353b029409978da5f8fd5d",
+  "weight_sha256": "39a0ea5bd4baa6a57a8ed2b3b058429df93f87c34205d4eb08680d282a71c3fa",
+  "strict_control_tensors": 4,
+  "control_shape": [
+    1,
+    3,
+    56,
+    56
+  ],
+  "256_mismatch": "The size of tensor a (64) must match the size of tensor b (56) at non-singleton dimension 3",
+  "author_export_same_as_rosteals": true
+}

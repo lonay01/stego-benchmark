@@ -1,0 +1,6 @@
+__pycache__/
+.pytest_cache/
+validation/download-audit/
+validation/hf/
+locks/*.resolve.log
+*.partial

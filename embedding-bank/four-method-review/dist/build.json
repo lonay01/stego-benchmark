@@ -1,0 +1,8 @@
+{
+  "sha256": "74d37a9c372beaaa10c45f3b44cb05d0a2eca08bfd302b97d620e0697e335a78",
+  "base_sha256": "e45bade8d2431d88ae6346bcca19b9f954fa7979deb7c439d90e156ef39fec13",
+  "archive": "Four_Method_QUALITY_CHECK_source.zip",
+  "notebook": "Four_Method_QUALITY_CHECK.ipynb",
+  "code_cells": 4,
+  "python_modules": 74
+}

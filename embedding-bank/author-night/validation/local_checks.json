@@ -1,0 +1,19 @@
+{
+  "date": "2026-09-30",
+  "platform": "Windows x86_64",
+  "python": "3.12.14",
+  "torch": "2.5.1+cpu",
+  "pytest": {"passed": 20, "failed": 0},
+  "ruff": "All checks passed for authored modules, tests and build/validation scripts",
+  "attack_smoke": {"framework": "pinned OmniSealBench source operators", "variants": 87, "input": "synthetic RGB 64x64", "device": "cpu"},
+  "dependency_resolution": {"rosteals": "resolved for Linux Python 3.9.23", "sepwater": "resolved for Linux Python 3.10.18", "distseal": "resolved for Linux Python 3.10.18", "full_linux_install_tested": false},
+  "sepwater_control": "Actual released checkpoint strictly loaded into author's control module; see sepwater_cpu.json",
+  "notebook": {"code_cells": 4, "static_compilation": "passed", "readable_source_zip": true},
+  "limitations": [
+    "No end-to-end CUDA inference performed on any of the three models in this release-validation run.",
+    "No measured runtime or overnight completion guarantee.",
+    "Full native DistSeal import smoke on Windows stopped at the ONNX dependency; onnxsim 0.4.36 lacked an installable local Windows/Python 3.12 wheel. The Linux/Python 3.10 lock resolved successfully and includes the mandatory ONNX packages.",
+    "Inception Score dataset loading is CPU-tested; actual classifier metric evaluation is not performed locally.",
+    "ImageNet validation unavailable; no FID reproduction."
+  ]
+}

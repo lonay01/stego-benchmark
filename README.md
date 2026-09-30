@@ -4,6 +4,14 @@
 
 All three channels report [published author references, our clean decoding, and paired degradation after attacks](docs/evaluation-baselines.md). Report absolute recovery as well as additional BER in percentage points. Each embedding mode has its own clean baseline from the exact saved PNG; author results retain their original experimental conditions.
 
+## Current review, 29 September 2026
+
+The active registry contains **29 existing-image entries**, with Meta Revisited HiDDeN in place of the legacy baseline. Three blocked entries have been removed from active selection. Historical notebooks below retain their original inventories; they do not migrate existing banks.
+
+- [Four-method diagnostic and launch instructions](embedding-bank/four-method-review/README.md)
+- [Diagnostic notebook](embedding-bank/four-method-review/dist/Four_Method_QUALITY_CHECK.ipynb)
+- [Matching readable source ZIP](embedding-bank/four-method-review/dist/Four_Method_QUALITY_CHECK_source.zip)
+
 ## Full-payload canary (new)
 
 Test the 32 catalogue entries on five historical COCO images and five full-length
@@ -49,9 +57,7 @@ The two configurations must not be reported as the same experiment. Existing
 results remain historical records; changed message assignments require a new
 versioned embedding bank rather than overwriting previous artifacts.
 
-The catalogue contains 32 methods, not 32 GPU-validated implementations.
-Some methods need manually supplied checkpoints or MATLAB; Camera-Shooting
-Instance remains blocked pending integration. The validation record separates
+Historical releases used a 32-entry inventory; the current catalogue has 29 existing-image entries. Historical blocker records remain evidence, not active work items. The validation record separates
 offline tests from actual pretrained-model smoke tests. Model weights, datasets,
 generated banks and credentials are not included. Upstream code and weights
 remain subject to their own licenses; see [third-party notes](embedding-bank/THIRD_PARTY.md).

@@ -1,5 +1,7 @@
 # Digital channel protocol
 
+**Evaluation policy:** report [author reference results, our clean baseline, and paired channel degradation](evaluation-baselines.md). Show absolute recovery and the change from the same saved carrier's clean decoding; published results are contextual references, not the subtraction baseline.
+
 This protocol tests watermark recovery after digital image distortions. It uses two embedding modes: Native and Matched Quality. Neural editing and physical capture are separate experiments.
 
 **Payload policy: full native payload, revision 21 September 2026.** The three channel protocols use one shared embedding bank. The earlier common-30-bit evaluation is not the policy for this run.

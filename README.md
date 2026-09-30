@@ -1,5 +1,9 @@
 # stego-benchmark
 
+## Evaluation baselines
+
+All three channels report [published author references, our clean decoding, and paired degradation after attacks](docs/evaluation-baselines.md). Report absolute recovery as well as additional BER in percentage points. Each embedding mode has its own clean baseline from the exact saved PNG; author results retain their original experimental conditions.
+
 ## Full-payload canary (new)
 
 Test the 32 catalogue entries on five historical COCO images and five full-length

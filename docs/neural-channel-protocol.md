@@ -1,5 +1,7 @@
 # Neural channel protocol
 
+**Evaluation policy:** report [author reference results, our clean baseline, and paired channel degradation](evaluation-baselines.md). Show absolute recovery and the change from the same saved carrier's clean decoding; published results are contextual references, not the subtraction baseline.
+
 This protocol tests watermark recovery after neural image reconstruction, regeneration, and editing. It follows the [digital channel protocol](digital-channel-protocol.md): the same COCO images, five full-payload message replicates per image and method, Native and Matched Quality modes, and message-recovery metrics. The main change is the attack matrix. Neural-channel output quality is recorded separately from embedding quality.
 
 **Payload policy: full native payload, revision 21 September 2026.** The three channel protocols use one shared embedding bank. The earlier common-30-bit evaluation is not the policy for this run.

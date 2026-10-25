@@ -1,0 +1,13 @@
+{
+  "fix": "hidden-fnns-storage-v1",
+  "source_archive_sha256": "6d7ddfcd05abdaf46f97ab7b6b174bff098b3043edcf069db64041554263f7b5",
+  "helper_sha256": "0d7406e6193f5496fbc60f46157f86130d338eb2bdee8d9d76a7b7a65a5bc85b",
+  "notebook": "COCO_Embedding_Bank_PRODUCTION_HIDDEN_FNNS_FIX.ipynb",
+  "default_images": 100,
+  "selected_methods": [
+    "meta_hidden_revisited",
+    "fnns_omniseal"
+  ],
+  "other_method_source_changes": 0,
+  "gpu_execution": "not_executed"
+}

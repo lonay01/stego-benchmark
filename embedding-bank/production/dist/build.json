@@ -1,0 +1,9 @@
+{
+  "sha256": "6d7ddfcd05abdaf46f97ab7b6b174bff098b3043edcf069db64041554263f7b5",
+  "files": 107,
+  "python_modules": 68,
+  "code_cells": 4,
+  "gpu_validation": "not_executed",
+  "notebook_hotfix": "rosteals-sepwater-system-libraries-v1",
+  "source_archive_unchanged": true
+}

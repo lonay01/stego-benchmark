@@ -1,0 +1,6 @@
+# Neural/controller environment only. All 29 decoder locks are separate.
+-r locks/channel.lock
+scipy==1.11.4
+scikit-image==0.22.0
+lpips==0.1.4
+gdown==5.2.0

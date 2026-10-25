@@ -1,0 +1,8 @@
+{
+  "source_sha256": "d0ef29acdda85b25230108c16bc046b61dcd67f3d4102482ecce16ba2937f789",
+  "base_sha256": "5b70653cf2fb7b23d6ff1b8585aa1b684808ba311d956cf5fc20da4b6a6311e2",
+  "notebook_sha256": "0826e8027fdf30e1b3185d55f25cd7f2ca5a1347874d53f2dade4cbe9f7516d5",
+  "code_cells": 5,
+  "python_modules": 8,
+  "gpu_tested": false
+}

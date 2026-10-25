@@ -1,0 +1,68 @@
+{
+  "registry": {
+    "id": "videoseal",
+    "family": "Videoseal",
+    "origin_group": "digital_or_posthoc",
+    "track": "posthoc",
+    "backend": "python",
+    "native_bits": 256,
+    "adapter": "wmbench_native_canary.adapters:NativeWibe",
+    "python": "3.10",
+    "environment": "legacy_videoseal",
+    "payload_namespace": "videoseal",
+    "source": {
+      "url": "https://github.com/ispras/wibe.git",
+      "revision": "acf94ed81db4243d22fb7a7e075aff1671bc58e0",
+      "submodules": []
+    },
+    "requirements": [
+      "torch==2.5.1",
+      "torchvision==0.20.1",
+      "numpy==1.26.4",
+      "Pillow==10.4.0",
+      "scipy==1.14.1",
+      "scikit-image==0.24.0",
+      "PyYAML==6.0.2",
+      "loguru==0.7.2",
+      "pydantic==2.10.6",
+      "requests==2.32.3",
+      "tqdm==4.66.5",
+      "einops==0.8.0",
+      "omegaconf==2.3.0",
+      "pandas==2.2.3",
+      "opencv-python==4.10.0.84",
+      "setuptools==80.9.0",
+      "videoseal @ git+https://github.com/facebookresearch/videoseal@870ca7fb33578b90f14c602016b6c2788096226e",
+      "av==13.1.0"
+    ],
+    "assets": [],
+    "options": {
+      "wrapper": "wibench.algorithms.videoseal.wrapper:VideosealWrapper",
+      "kwargs": {},
+      "model_card": "resources/videoseal/videoseal_1.0.yaml"
+    },
+    "capability": {
+      "status": "ready_unverified",
+      "ecc": "none"
+    },
+    "notes": "Prior checkpoint/settings and payload placement; pinned WIBE wrapper, safe archive extraction. GPU smoke remains required. Full asset hashes are frozen after initialization.",
+    "validated_lock": "locks/legacy_videoseal.lock",
+    "native_geometry": {
+      "width": 512,
+      "height": 512,
+      "source_width": 512,
+      "source_height": 512,
+      "input_rule": "historical_rgb512_center_crop_no_resampling",
+      "crop_box_xyxy": [
+        0,
+        0,
+        512,
+        512
+      ]
+    },
+    "engine": "registry"
+  },
+  "weights": {
+    "model_files/videoseal/y_256b_img.pth": "3d2ff2523d2a89e3532c6dfdcf693098799326e9b3e74c185e815e9baa8340a3"
+  }
+}
